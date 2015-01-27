@@ -1,17 +1,17 @@
 package org.avManager.model
 {
+	import flash.data.SQLConnection;
+	import flash.events.SQLErrorEvent;
+	import flash.events.SQLEvent;
 	import flash.filesystem.File;
 	
 	import mx.controls.Alert;
+	
 	import org.avManager.model.sql.ActressTable;
+	import org.avManager.model.sql.ClassificationTable;
 
 	public final class SQLiteManager
 	{
-		
-		import flash.data.SQLConnection;
-		import flash.data.SQLStatement;
-		import flash.events.SQLErrorEvent;
-		import flash.events.SQLEvent;
 		
 		private static var _instance:SQLiteManager;
 		
@@ -19,11 +19,23 @@ package org.avManager.model
 		
 		private var _actressTable:ActressTable;
 		
+		private var _classificationTable:ClassificationTable;
+		
 		public function SQLiteManager(t:T)
 		{
-			_actressTable = new ActressTable();
+			
 		}
 		
+		public function get actressTable():ActressTable
+		{
+			return _actressTable;
+		}
+
+		public function get classificationTable():ClassificationTable
+		{
+			return _classificationTable;
+		}
+
 		public function init(dbFile:File):void{
 			_sqlConnection = new SQLConnection();
 			//在 openAsync() 方法调用操作成功完成时调度
@@ -38,7 +50,11 @@ package org.avManager.model
 			_sqlConnection.removeEventListener(SQLEvent.OPEN,openHandler);
 			_sqlConnection.removeEventListener(SQLErrorEvent.ERROR,errorHandler);
 			// 开始创建表
-			_actressTable.createTable(_sqlConnection);
+			_actressTable = new ActressTable(_sqlConnection);
+			_actressTable.createTable();
+			
+			_classificationTable = new ClassificationTable(_sqlConnection);
+			_classificationTable.createTable();
 		}
 		
 		private function errorHandler(evt:SQLErrorEvent):void{

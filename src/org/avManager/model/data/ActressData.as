@@ -23,6 +23,7 @@ package org.avManager.model.data
 		
 		public function ActressData()
 		{
+			super();
 		}
 
 		public function get actressID():String

@@ -2,19 +2,24 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   width="1200" height="800" creationComplete="onCreationCompleteHandler(event)">
+					   width="1200" height="800" creationComplete="onCreationCompleteHandler(event)" xmlns:classification="org.avManager.view.classification.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
 			import mx.events.MenuEvent;
 			
+			import org.avManager.model.ClassificationManager;
 			import org.avManager.model.SQLiteManager;
 			import org.avManager.view.UIManager;
 			
 			protected function onCreationCompleteHandler(event:FlexEvent):void
 			{
+				// 初始化视图
 				UIManager.instance.init(this);
-				//SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"));
+				
+				// 初始化数据
+				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"));
+				ClassificationManager.instance.init();
 			}
 			
 			private function onMenuBarClicked(event:MenuEvent):void {
@@ -24,16 +29,16 @@
 			private function doFun(funName:String):void{
 				switch(funName){
 					case "new":
-//						onShowVideoDetailFrame(null);
+						//						onShowVideoDetailFrame(null);
 						break;
 					case "open":
-//						this.openTorrentDir();
+						//						this.openTorrentDir();
 						break;
 					case "spiderAll":
-//						VideoManager.instance.spiderAll();
+						//						VideoManager.instance.spiderAll();
 						break;
 					case "actressLib":
-//						onShowActressFrame();
+						//						onShowActressFrame();
 						break;
 					case "about":
 						UIManager.instance.showAbout();
@@ -70,20 +75,21 @@
 					dataProvider="{menuData}" labelField="@label"/>
 		<!--
 		<mx:ToolBar id="toolBar" width="100%" height="30">
-			<mx:Repeater id="_toolBarRepeater" width="100%" height="100%" dataProvider="{toolBarData}">
-				<s:Button click="onToolBarlickHandler(event)" label="{_toolBarRepeater.currentItem.@label}" name="{_toolBarRepeater.currentItem.@name}" icon="/assets/test.png" toolTip="{_toolBarRepeater.currentItem.@label}"/>
-			</mx:Repeater>
+		<mx:Repeater id="_toolBarRepeater" width="100%" height="100%" dataProvider="{toolBarData}">
+		<s:Button click="onToolBarlickHandler(event)" label="{_toolBarRepeater.currentItem.@label}" name="{_toolBarRepeater.currentItem.@name}" icon="/assets/test.png" toolTip="{_toolBarRepeater.currentItem.@label}"/>
+		</mx:Repeater>
 		</mx:ToolBar>
 		-->
 		<s:HGroup width="100%" height="100%">
+			<classification:Classification width="200" height="100%"/>
 			<!--
 			<selector:GenresSelector id="_genresSelector" width="200" height="100%"/>
 			<s:Group width="100%" height="100%">
-				<videoContainer:VideoContainer id="_videoContainer" width="100%" height="100%"/>
-				<s:VGroup width="100%" height="100%" id="_actressContainer" visible="false">
-					<actressContainer:ActressDetail width="100%" height="200" id="_actressDetail"/>
-					<videoContainer:VideoContainer id="_actressVideoContainer" width="100%" height="100%"/>
-				</s:VGroup>
+			<videoContainer:VideoContainer id="_videoContainer" width="100%" height="100%"/>
+			<s:VGroup width="100%" height="100%" id="_actressContainer" visible="false">
+			<actressContainer:ActressDetail width="100%" height="200" id="_actressDetail"/>
+			<videoContainer:VideoContainer id="_actressVideoContainer" width="100%" height="100%"/>
+			</s:VGroup>
 			</s:Group>
 			-->
 		</s:HGroup>

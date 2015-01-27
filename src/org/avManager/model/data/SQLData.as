@@ -31,7 +31,5 @@ package org.avManager.model.data
 		{
 			_name = value;
 		}
-
-
 	}
 }
