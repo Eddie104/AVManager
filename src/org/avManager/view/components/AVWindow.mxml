@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="1200" height="800"
+		 addedToStage="onAddedToStageHandler(event)"
+		 close="onCloseHandler(event)"
+		 creationComplete="onCreationCompleteHandler(event)"
+		 removedFromStage="onRemovedFromStageHandler(event)">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.libra.flex.utils.PopUpUtil;
+			
+			private function onAddedToStageHandler(event:Event):void {
+				this.stage.addEventListener(Event.RESIZE, onResize);
+			}
+			
+			private function onRemovedFromStageHandler(event:Event):void {
+				this.stage.removeEventListener(Event.RESIZE, onResize);
+			}
+			
+			private function onResize(event:Event):void {
+				this.draw();
+			}
+			
+			/**
+			 * 关闭本窗口
+			 */
+			private function onCloseHandler(event:Event):void {
+				PopUpUtil.instance.removePopUp(this, 1);
+			}
+			
+			protected function onCreationCompleteHandler(event:FlexEvent):void {
+				draw();
+			}
+			
+			protected function draw():void
+			{
+				
+			}
+			
+		]]>
+	</fx:Script>
+</s:TitleWindow>
