@@ -42,6 +42,7 @@ package org.avManager.model
 				videoData.coverSub = BitmapBytes.byteArrayToBitmapData(data.COVER_SUB);
 				videoData.date = data.DATE;
 				videoData.videoID = data.VIDEO_ID;
+				videoData.torrent = data.TORRENT;
 				this._videoDataList.addItem(videoData);
 			}
 		}

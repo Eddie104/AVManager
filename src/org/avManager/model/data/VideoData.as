@@ -8,6 +8,8 @@ package org.avManager.model.data
 	import flash.events.IOErrorEvent;
 	import flash.net.URLRequest;
 	
+	import mx.collections.ArrayCollection;
+	
 	import org.avManager.model.ClassificationManager;
 	import org.libra.log4a.Logger;
 
@@ -25,6 +27,11 @@ package org.avManager.model.data
 		private var _classificationList:Vector.<ClassificationData> = new Vector.<ClassificationData>();
 		
 		private var _classification:Array = [];
+		
+		private var _torrent:String;
+		
+		[Bindable]
+		private var _torrentList:ArrayCollection = new ArrayCollection();
 		
 		public function VideoData(id:int)
 		{
@@ -139,5 +146,24 @@ package org.avManager.model.data
 				_classificationList.push(ClassificationManager.instance.getClassificationByID(i));
 			}
 		}
+	
+		[SQLData(cloName="TORRENT")]
+		public function get torrent():String
+		{
+			return _torrent;
+		}
+
+		public function set torrent(value:String):void
+		{
+			_torrent = value;
+			_torrentList.source = _torrent.split(" ");
+		}
+
+		public function get torrentList():ArrayCollection
+		{
+			return _torrentList;
+		}
+
+
 	}
 }

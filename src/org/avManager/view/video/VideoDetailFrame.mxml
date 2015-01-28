@@ -120,18 +120,18 @@
 //					}
 					
 					// 获取种子资源
-//					a = html.match(/\[url=http:\/\/.*url\]/g);
-//					if(a){
-//						var aa:Array;
-//						var s:String = '';
-//						for(var i:int = 0;i < a.length;i++){
-//							aa = a[i].match(/http:\/\/\w*\.*\w+\.\w+\/[\w* .\/?\-%&=]*/);
-//							if(aa && aa.length){
-//								s += s ? " " + aa[0] : aa[0];
-//							}
-//						}
-//						this._spideringVideoData.torrent = s;	
-//					}
+					a = html.match(/\[url=http:\/\/.*url\]/g);
+					if(a){
+						var aa:Array;
+						var s:String = '';
+						for(var i:int = 0;i < a.length;i++){
+							aa = a[i].match(/http:\/\/\w*\.*\w+\.\w+\/[\w* .\/?\-%&=]*/);
+							if(aa && aa.length){
+								s += s ? " " + aa[0] : aa[0];
+							}
+						}
+						this._videoData.torrent = s;	
+					}
 					
 //					this.dispatchEvent(new VideoDataEvent(VideoDataEvent.UPDATE_VIDEO_COMPLETED, this._spideringVideoData));
 					
@@ -173,6 +173,12 @@
 				<s:Label width="80" height="24" text="发行时间:" verticalAlign="middle"/>
 				<s:Label text="{_videoData ? DateUtil.toString(_videoData.date) : null}" verticalAlign="middle" height="100%"/>
 			</s:HGroup>
+			<mx:ToolBar width="100%" height="100%">
+				<mx:Repeater id="_torrentContainer" width="100%" height="100%" dataProvider="{_videoData ? _videoData.torrentList : null}">
+					<!--<videoDetailFrame:TorrentUrlContainer width="100%" height="100%" torrentUrl="{_torrentContainer.currentItem}"/>-->
+					<s:Label text="{_torrentContainer.currentItem}"/>
+				</mx:Repeater>
+			</mx:ToolBar>
 		</s:VGroup>
 	</s:HGroup>
 </components:AVWindow>
