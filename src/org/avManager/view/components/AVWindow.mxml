@@ -23,7 +23,9 @@
 				this.stage.removeEventListener(Event.RESIZE, onResize);
 			}
 			
-			private function onResize(event:Event):void {
+			protected function onResize(event:Event):void {
+				this.width = this.stage.stageWidth;
+				this.height = this.stage.stageHeight;
 				this.draw();
 			}
 			

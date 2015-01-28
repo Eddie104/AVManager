@@ -14,8 +14,8 @@ package org.avManager.model.sql
 		
 		public function ActressTable(sqlConnection:SQLConnection)
 		{
-			super(sqlConnection);
 			_tableName = "actress";
+			super(sqlConnection);
 		}
 		
 		override protected function init():void{
@@ -43,7 +43,8 @@ package org.avManager.model.sql
 			_createSql += ")";
 		}
 		
-		override public function insert(sqlData:SQLData):void{
+		override public function insert(sqlData:SQLData, callback:Function = null):void{
+			super.insert(sqlData, callback);
 			var actressData:ActressData = sqlData as ActressData;
 			_insertStatement.parameters["@actressID"] = "a3f";
 			_insertStatement.parameters["@name"] = "みづき伊織";

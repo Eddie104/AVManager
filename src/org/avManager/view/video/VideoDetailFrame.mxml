@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:AVWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" 
+					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			
+			import org.avManager.model.ClassificationManager;
+			import org.avManager.model.VideoManager;
+			import org.avManager.model.data.VideoData;
+			import org.libra.log4a.Logger;
+			import org.libra.utils.DateUtil;
+			import org.libra.utils.text.RegExpUtil;
+			import org.libra.utils.text.StringUtil;
+			
+			[Bindable]
+			private var _videoData:VideoData;
+			
+			private var _videoID:String;
+			
+			public function set videoData(value:VideoData):void
+			{
+				_videoData = value;
+			}
+			
+			protected function onSearchHandler(event:MouseEvent):void
+			{
+				this._videoID = _videoIDInput.text;
+				if(_videoID && _videoID.indexOf("-") != -1){
+					_videoData = VideoManager.instance.createVideoID(_videoID);
+					if(_videoData.needInsert){
+						var urlLoader:URLLoader = new URLLoader();
+						urlLoader.load(new URLRequest("http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=" + _videoID));
+						urlLoader.addEventListener(Event.COMPLETE, onSearchCompleted);
+						urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
+					}else{
+						test.source = _videoData.cover;
+					}
+				}else{
+					Alert.show("请输入正确格式的番号");
+				}
+			}
+			
+			private function onSearchIOError(event:IOErrorEvent):void
+			{
+				var urlLoader:URLLoader = event.target as URLLoader;
+				urlLoader.removeEventListener(Event.COMPLETE, onSearchCompleted);
+				urlLoader.removeEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
+				Logger.error(event.text);
+//				this.dispatchEvent(new LoadingEvent(LoadingEvent.CLOSE));
+				Alert.show("暂无法从数据源网站获取数据，稍后再试！");
+			}
+			
+			private function onSearchCompleted(event:Event):void
+			{
+				var urlLoader:URLLoader = event.target as URLLoader;
+				urlLoader.removeEventListener(Event.COMPLETE, onSearchCompleted);
+				urlLoader.removeEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
+				this.getDataFromHtml(urlLoader.data);
+			}
+			
+			private function getDataFromHtml(html:String):void
+			{
+				var a:Array;
+				if(html.match(/<div class="boxtitle">/g).length){
+					Alert.show("找不到该番号对应的影片信息,番号:" + _videoID);
+				}else{
+					// 获取图片url
+					a = html.match(/<img id="video_jacket_img".*<\/div>/);
+					if(a && a.length){
+						a = a[0].match(/http:\/\/.*jpg"/);
+						_videoData.setCoverURL(a[0].replace("\"", ""))
+					}
+					
+					// 获取影片名
+					a = html.match(/<div id="video_title">.*<\/a><\/h3>/);
+					if(a && a.length){
+						this._videoData.name = RegExpUtil.removeHTMLTag(a[0]);					
+					}
+					
+					// 获取番号
+					this._videoData.videoID = getContentFromHtml("识别码", html);
+					
+					// 获取发行日期
+					var dateAry:Array = getContentFromHtml("发行日期", html).split("-");
+					this._videoData.date = new Date(dateAry[0], dateAry[1], dateAry[2]);
+					
+					// 获取类别
+					var classificationAry:Array = getContentFromHtml("类别", html).split(" ");
+					for each(var classification:String in classificationAry){
+						if(classification){
+							_videoData.addClassification(ClassificationManager.instance.createClassification(classification));							
+						}
+					}
+					
+					// 获取演员
+//					var castStr:String = getContentFromHtml("演员", html);
+//					this._spideringVideoData.cast = castStr;
+//					if(castStr == "null"){
+//						info += "\n无法获取演员";
+//					}
+					
+					// 获取制作商
+//					this._spideringVideoData.maker = getContentFromHtml("制作商", html);
+//					if(this._spideringVideoData.maker == "null"){
+//						info += "\n无法获取制作商";
+//					}
+//					
+//					// 获取发行商
+//					this._spideringVideoData.publisher = getContentFromHtml("发行商", html);
+//					if(this._spideringVideoData.publisher == "null"){
+//						info += "\n无法获取发行商";
+//					}
+//					
+//					// 获取导演
+//					this._spideringVideoData.director = getContentFromHtml("导演", html);
+//					if(this._spideringVideoData.director == "null"){
+//						info += "\n无法获取导演";
+//					}
+					
+					// 获取种子资源
+//					a = html.match(/\[url=http:\/\/.*url\]/g);
+//					if(a){
+//						var aa:Array;
+//						var s:String = '';
+//						for(var i:int = 0;i < a.length;i++){
+//							aa = a[i].match(/http:\/\/\w*\.*\w+\.\w+\/[\w* .\/?\-%&=]*/);
+//							if(aa && aa.length){
+//								s += s ? " " + aa[0] : aa[0];
+//							}
+//						}
+//						this._spideringVideoData.torrent = s;	
+//					}
+					
+//					this.dispatchEvent(new VideoDataEvent(VideoDataEvent.UPDATE_VIDEO_COMPLETED, this._spideringVideoData));
+					
+					function getContentFromHtml(tag:String, html:String):String{
+						var reg:String  ='<tr>\\s*.*' + tag + '.*\\s*.*\\s*.*\\s*</tr>';
+						var arr:Array = html.match(new RegExp(reg,"g"));
+						if(arr && arr.length){
+							arr = arr[0].match(/<td class="text">.*<\/td>/);
+							return StringUtil.trim(RegExpUtil.removeHTMLTag(arr[0], " ").replace(" &nbsp;", ""));
+						}else{
+							return "null";
+						}
+					}
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:HGroup width="100%" height="100%">
+		<s:Scroller width="800" height="100%">
+			<s:Group width="100%" height="100%">
+				<s:Image id="test" source="{_videoData ? _videoData.cover : null}"/>
+			</s:Group>
+		</s:Scroller>
+		<s:VGroup width="100%" height="100%">
+			<s:HGroup width="100%" height="24">
+				<s:Label text="番号:" width="80" height="24" verticalAlign="middle"/>
+				<s:TextInput width="100%" id="_videoIDInput"/>
+				<s:Button label="搜索" click="onSearchHandler(event)"/>
+			</s:HGroup>
+			<s:HGroup width="100%" height="24">
+				<s:Label text="影片名:" width="80" height="24" verticalAlign="middle"/>
+				<s:Label text="{_videoData ? _videoData.name : null}" verticalAlign="middle" height="100%"/>
+			</s:HGroup>
+			<s:HGroup width="100%" height="24">
+				<s:Label width="80" height="24" text="发行时间:" verticalAlign="middle"/>
+				<s:Label text="{_videoData ? DateUtil.toString(_videoData.date) : null}" verticalAlign="middle" height="100%"/>
+			</s:HGroup>
+		</s:VGroup>
+	</s:HGroup>
+</components:AVWindow>

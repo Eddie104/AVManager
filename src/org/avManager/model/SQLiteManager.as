@@ -9,11 +9,14 @@ package org.avManager.model
 	
 	import org.avManager.model.sql.ActressTable;
 	import org.avManager.model.sql.ClassificationTable;
+	import org.avManager.model.sql.VideoTable;
 
 	public final class SQLiteManager
 	{
 		
 		private static var _instance:SQLiteManager;
+		
+		private var _initCallback:Function;
 		
 		private var _sqlConnection:SQLConnection;
 		
@@ -21,22 +24,15 @@ package org.avManager.model
 		
 		private var _classificationTable:ClassificationTable;
 		
+		private var _videoTable:VideoTable;
+		
 		public function SQLiteManager(t:T)
 		{
 			
 		}
-		
-		public function get actressTable():ActressTable
-		{
-			return _actressTable;
-		}
 
-		public function get classificationTable():ClassificationTable
-		{
-			return _classificationTable;
-		}
-
-		public function init(dbFile:File):void{
+		public function init(dbFile:File, callback:Function):void{
+			this._initCallback = callback
 			_sqlConnection = new SQLConnection();
 			//在 openAsync() 方法调用操作成功完成时调度
 			_sqlConnection.addEventListener(SQLEvent.OPEN,openHandler);
@@ -55,6 +51,11 @@ package org.avManager.model
 			
 			_classificationTable = new ClassificationTable(_sqlConnection);
 			_classificationTable.createTable();
+			
+			_videoTable = new VideoTable(_sqlConnection);
+			_videoTable.createTable();
+			
+			_initCallback();
 		}
 		
 		private function errorHandler(evt:SQLErrorEvent):void{
@@ -66,6 +67,21 @@ package org.avManager.model
 		public static function get instance():SQLiteManager{
 			if(!_instance) _instance = new SQLiteManager(new T());
 			return _instance;
+		}
+		
+		public function get actressTable():ActressTable
+		{
+			return _actressTable;
+		}
+		
+		public function get classificationTable():ClassificationTable
+		{
+			return _classificationTable;
+		}
+
+		public function get videoTable():VideoTable
+		{
+			return _videoTable;
 		}
 		
 	}

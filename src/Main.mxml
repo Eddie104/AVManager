@@ -2,7 +2,8 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   width="1200" height="800" creationComplete="onCreationCompleteHandler(event)" xmlns:classification="org.avManager.view.classification.*">
+					   width="1200" height="800" creationComplete="onCreationCompleteHandler(event)" xmlns:classification="org.avManager.view.classification.*"
+					   closing="onCloseHandler(event)">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
@@ -10,16 +11,38 @@
 			
 			import org.avManager.model.ClassificationManager;
 			import org.avManager.model.SQLiteManager;
+			import org.avManager.model.VideoManager;
 			import org.avManager.view.UIManager;
 			
-			protected function onCreationCompleteHandler(event:FlexEvent):void
+			private function onCreationCompleteHandler(event:FlexEvent):void
 			{
+				const appXML:XML = NativeApplication.nativeApplication.applicationDescriptor;
+				var ns:Namespace = appXML.namespace();
+				this.title = 'AVManager ' + String(appXML.ns::versionNumber);
 				// 初始化视图
 				UIManager.instance.init(this);
 				
 				// 初始化数据
-				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"));
+				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"), this.onSqlInited);
+			}
+			
+			private function onSqlInited():void{
 				ClassificationManager.instance.init();
+				VideoManager.instance.init();
+			}
+			
+			protected function onCloseHandler(event:Event = null):void
+			{
+				if(event) event.preventDefault();
+				VideoManager.instance.save(saveClassification);
+			}
+			
+			private function saveClassification():void{
+				ClassificationManager.instance.save(exitApp);
+			}
+			
+			private function exitApp():void{
+				NativeApplication.nativeApplication.exit();
 			}
 			
 			private function onMenuBarClicked(event:MenuEvent):void {
@@ -30,6 +53,7 @@
 				switch(funName){
 					case "new":
 						//						onShowVideoDetailFrame(null);
+						UIManager.instance.showVideoDetailFrame();
 						break;
 					case "open":
 						//						this.openTorrentDir();
@@ -44,10 +68,12 @@
 						UIManager.instance.showAbout();
 						break;
 					case "exit":
-						NativeApplication.nativeApplication.exit();
+//						NativeApplication.nativeApplication.exit();
+						onCloseHandler();
 						break;
 				}
 			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>

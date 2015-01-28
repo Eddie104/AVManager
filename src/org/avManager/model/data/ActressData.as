@@ -21,9 +21,9 @@ package org.avManager.model.data
 		
 		private var _portrait:BitmapData;
 		
-		public function ActressData()
+		public function ActressData(id:int)
 		{
-			super();
+			super(id);
 		}
 
 		public function get actressID():String

@@ -5,13 +5,16 @@ package org.avManager.model.sql
 	import flash.data.SQLStatement;
 	import flash.events.SQLErrorEvent;
 	import flash.events.SQLEvent;
+	import flash.utils.ByteArray;
+	import flash.utils.describeType;
 	
 	import org.avManager.model.data.SQLData;
 	import org.libra.log4a.Logger;
+	import org.libra.utils.bytes.BitmapBytes;
 
 	public class Table
 	{
-		protected var _tableName:String = "tableName";
+		protected var _tableName:String;
 		
 		protected var _createSql:String;
 		
@@ -21,7 +24,15 @@ package org.avManager.model.sql
 		
 		protected var _insertStatement:SQLStatement;
 		
+		protected var _insertCallBack:Function;
+		
 		protected var _queryStatement:SQLStatement;
+		
+		protected var _queryCallBack:Function;
+		
+		protected var _updateStatement:SQLStatement;
+		
+		protected var _updateCallback:Function;
 		
 		protected var _deleteStatement:SQLStatement;
 		
@@ -31,6 +42,7 @@ package org.avManager.model.sql
 			_insertStatement = new SQLStatement();
 			_queryStatement = new SQLStatement();
 			_deleteStatement = new SQLStatement();
+			_updateStatement = new SQLStatement();
 			this.init();
 		}
 		
@@ -46,6 +58,10 @@ package org.avManager.model.sql
 			_deleteStatement.sqlConnection = _sqlConnection;
 			_deleteStatement.text = "delete from " + _tableName + " where ID=:id";
 			_deleteStatement.addEventListener(SQLEvent.RESULT, onDeleteHandler);
+			
+			_updateStatement.sqlConnection = _sqlConnection;
+			_updateStatement.text = "update " + _tableName + " set where ID=:id";
+			_updateStatement.addEventListener(SQLEvent.RESULT, onUpdateHandler);
 		}
 		
 		public function createTable():void{
@@ -60,11 +76,12 @@ package org.avManager.model.sql
 			_createStmt.execute();
 		}
 		
-		public function insert(sqlData:SQLData):void{
-			
+		public function insert(sqlData:SQLData, callback:Function = null):void{
+			_insertCallBack = callback;
 		}
 		
-		public function query(idList:Vector.<int> = null):void{
+		public function query(callback:Function, idList:Vector.<int> = null):void{
+			this._queryCallBack = callback;
 			if(idList){
 				var idListStr:String = "(";
 				for(var i:int = 0;i < idList.length;i++){
@@ -76,6 +93,58 @@ package org.avManager.model.sql
 				_queryStatement.text = "select * from " + _tableName;
 			}
 			_queryStatement.execute(); 
+		}
+		
+		public function update(sqlData:SQLData, callback:Function = null):void{
+			this._updateCallback = callback;
+			_updateStatement.text = "update " + _tableName + " set ";
+			
+			var keyValStr:String = "";
+			var xml:XML = describeType(sqlData);
+			//获取到对象getter的xmlList
+			var accessorList:XMLList = xml.accessor;
+			var accessorXML:XML;
+			const l:int = accessorList.length();
+			var name:String;
+			var metadataXMlList:XMLList;
+			var metadataXMlLength:int = 0;
+			for(var i:int = 0;i < l;i++){
+				accessorXML = accessorList[i];
+				name = accessorXML.@name;
+				metadataXMlList = accessorXML.metadata;
+				metadataXMlLength = metadataXMlList.length();
+				for(var j:int = 0; j < metadataXMlLength;j++){
+					if(metadataXMlList[j].@name.toString() == "SQLData"){
+						var args:XMLList = metadataXMlList[j].arg;
+						for each(var arg:XML in args){
+							if(arg.@key.toString() == "type"){
+								switch(arg.@value.toString()){
+									case "BitmapData":
+										_updateStatement.parameters["@" + name] = BitmapBytes.bitmapDataToByteArray(sqlData[name]);
+										break;
+									case "Array":
+										var b:ByteArray = new ByteArray();
+										b.writeObject(sqlData[name]);
+										_updateStatement.parameters["@" + name] = b;
+										break;
+								}
+							}else if(arg.@key.toString() == "cloName"){
+								if(keyValStr){
+									keyValStr += ", " + arg.@value + " = @" + name;
+								}else{
+									keyValStr = arg.@value + " = @" + name;
+								}
+							}
+						}
+						if(!_updateStatement.parameters["@" + name]){
+							_updateStatement.parameters["@" + name] = sqlData[name];
+						}
+						break;
+					}
+				}
+			}
+			_updateStatement.text += keyValStr + " where ID = " + sqlData.id;
+			_updateStatement.execute();
 		}
 		
 		public function del(idList:Vector.<int> = null):void{
@@ -95,34 +164,35 @@ package org.avManager.model.sql
 		protected function onInsertHandler(evt:SQLEvent):void{
 			var result:SQLResult = this._insertStatement.getResult();
 			if(result.complete){
-				//				if(++_test < 10)
-				//					insert();
-				//				else
-				//					trace("好了");
-				trace("好了");
+				if(this._insertCallBack != null) _insertCallBack();
 			}
 		}
 		
 		protected function onQueryHandler(evt:SQLEvent):void{
 			var result:SQLResult = this._queryStatement.getResult();
-			if ( result.data!=null )
+			if (result.data != null)
 			{
-				var numResults:int = result.data.length;
-				
-				for (var i:int = 0; i < numResults; i++) 
-				{ 
-					var row:Object = result.data[i]; 
-					var output:String = "ID: " + row.ID; 
-					output += "; ACTRESS_ID: " + row.ACTRESS_ID; 
-					output += "; NAME: " + row.NAME;
-					output += "; BIRTHDAY: " + row.BIRTHDAY.fullYear;
-					
-					trace(output); 
-					
-					//					var bmd:BitmapData = BitmapBytes.byteArrayToBitmapData(row.PORTRAIT);
-					//					trace(bmd);
-				} 
+				if(_queryCallBack != null) _queryCallBack(result.data);
+//				var numResults:int = result.data.length;
+//				
+//				for (var i:int = 0; i < numResults; i++) 
+//				{ 
+//					var row:Object = result.data[i]; 
+//					var output:String = "ID: " + row.ID; 
+//					output += "; ACTRESS_ID: " + row.ACTRESS_ID; 
+//					output += "; NAME: " + row.NAME;
+//					output += "; BIRTHDAY: " + row.BIRTHDAY.fullYear;
+//					
+//					trace(output); 
+//					
+//					//					var bmd:BitmapData = BitmapBytes.byteArrayToBitmapData(row.PORTRAIT);
+//					//					trace(bmd);
+//				} 
 			}
+		}
+		
+		protected function onUpdateHandler(evt:SQLEvent):void{
+			if(_updateCallback != null) _updateCallback();
 		}
 		
 		protected function onDeleteHandler(evt:SQLEvent):void{

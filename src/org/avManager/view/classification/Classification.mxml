@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="300" height="800">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="300" height="800"
+		 creationComplete="onCreationCompleteHandler(event)">
 	
 	<fx:Script>
 		<![CDATA[
-			protected function onclassifyFilter(event:MouseEvent):void
+			import mx.events.FlexEvent;
+			
+			import org.avManager.model.ClassificationManager;
+			
+			import spark.events.IndexChangeEvent;
+			
+			protected function onCreationCompleteHandler(event:FlexEvent):void
 			{
-				var item:Object = (event.currentTarget as Tree).selectedItem;
-				if(item){
-//					var filter:String = item.@type;
-//					var subType:String = item.@subType;
-//					this.dispatchEvent(new VideoFilterdEvent(VideoFilterdEvent.FILTERD, filter, subType));
-				}
+				_classifyList.dataProvider = ClassificationManager.instance.classificationDataList;
 			}
+			
+			private function onClassifyListChangeHandler(event:IndexChangeEvent):void
+			{
+//				trace(ClassificationManager.instance.getClassification(event.newIndex).name);
+			}
+			
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<mx:Tree id="_classifyTree" width="100%" height="100%" labelField="@label" showRoot="false" click="onclassifyFilter(event)"/>
-</s:Group>
+	<!--<mx:Tree id="_classifyTree" width="100%" height="100%" labelField="@name" showRoot="false" click="onclassifyFilter(event)"/>-->
+	<s:Label height="20" width="100%" textAlign="left" verticalAlign="middle" text="类 别"/>
+	<s:List id="_classifyList" width="100%" labelField="name" height="100%" change="onClassifyListChangeHandler(event)"/>
+</s:VGroup>
