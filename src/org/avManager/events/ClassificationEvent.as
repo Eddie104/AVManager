@@ -5,19 +5,22 @@ package org.avManager.events
 	public final class ClassificationEvent extends Event
 	{
 		
-		public static const SELECTED:String = "selected";
+		public static const SWITCH:String = "switch";
 		
-		private var _classificationName:String;
+		private var _curIndex:int;
 		
-		public function ClassificationEvent(type:String, classificationName:String = null)
+		public function ClassificationEvent(type:String, curIndex:int)
 		{
 			super(type);
-			_classificationName = classificationName;
+			_curIndex = curIndex;
 		}
-
-		public function get classificationName():String
+		
+		/**
+		 * 0:电影，1:演员
+		 */
+		public function get curIndex():int
 		{
-			return _classificationName;
+			return _curIndex;
 		}
 
 	}

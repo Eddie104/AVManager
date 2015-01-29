@@ -3,17 +3,20 @@
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
 					   width="1200" height="800" creationComplete="onCreationCompleteHandler(event)" xmlns:classification="org.avManager.view.classification.*"
-					   closing="onCloseHandler(event)" xmlns:video="org.avManager.view.video.*">
+					   closing="onCloseHandler(event)" xmlns:video="org.avManager.view.video.*" xmlns:actress="org.avManager.view.actress.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
 			import mx.events.MenuEvent;
 			
 			import org.avManager.events.ClassificationEvent;
+			import org.avManager.events.VideoClassificationEvent;
+			import org.avManager.model.ActressManager;
 			import org.avManager.model.ClassificationManager;
 			import org.avManager.model.SQLiteManager;
 			import org.avManager.model.VideoManager;
 			import org.avManager.view.UIManager;
+			import org.libra.log4a.Logger;
 			
 			private function onCreationCompleteHandler(event:FlexEvent):void
 			{
@@ -22,15 +25,28 @@
 				this.title = 'AVManager ' + String(appXML.ns::versionNumber);
 				// 初始化视图
 				UIManager.instance.init(this);
-				_classification.addEventListener(ClassificationEvent.SELECTED, onClassificationSelected);
+				_classification.addEventListener(VideoClassificationEvent.SELECTED, onVideoClassificationSelected);
+				_classification.addEventListener(ClassificationEvent.SWITCH, onClassificationSwitch);
 				
 				// 初始化数据
 				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"), this.onSqlInited);
 			}
 			
 			private function onSqlInited():void{
-				ClassificationManager.instance.init();
-				VideoManager.instance.init();
+				ClassificationManager.instance.init(this.initVideoManager);
+			}
+			
+			private function initVideoManager():void{
+				VideoManager.instance.init(this.initActressManager);
+				
+			}
+			
+			private function initActressManager():void{
+				ActressManager.instance.init(this.inited);
+			}
+			
+			private function inited():void{
+				Logger.info("所有Manager初始化完毕");
 			}
 			
 			protected function onCloseHandler(event:Event = null):void
@@ -40,7 +56,11 @@
 			}
 			
 			private function saveClassification():void{
-				ClassificationManager.instance.save(exitApp);
+				ClassificationManager.instance.save(saveActress);
+			}
+			
+			private function saveActress():void{
+				ActressManager.instance.save(exitApp);
 			}
 			
 			private function exitApp():void{
@@ -76,9 +96,21 @@
 				}
 			}
 			
-			protected function onClassificationSelected(event:ClassificationEvent):void
+			protected function onVideoClassificationSelected(event:VideoClassificationEvent):void
 			{
 				this._videoPreviewContainer.updateVideoList(VideoManager.instance.getVideoDataListByClassification(event ? event.classificationName : null));
+			}
+			
+			protected function onClassificationSwitch(event:ClassificationEvent):void
+			{
+				if(event.curIndex == 0){
+					_videoPreviewContainer.visible = true;
+					_actressPreviewContainer.visible = false;
+				}else if(event.curIndex == 1){
+					_videoPreviewContainer.visible = false;
+					_actressPreviewContainer.visible = true;
+					_actressPreviewContainer.updateActressList(ActressManager.instance.getActressList());
+				}
 			}
 			
 		]]>
@@ -106,26 +138,12 @@
 	<s:VGroup id="_menuBar" width="100%" height="100%" horizontalAlign="left">
 		<mx:MenuBar width="100%" height="30" change="onMenuBarClicked(event)"
 					dataProvider="{menuData}" labelField="@label"/>
-		<!--
-		<mx:ToolBar id="toolBar" width="100%" height="30">
-		<mx:Repeater id="_toolBarRepeater" width="100%" height="100%" dataProvider="{toolBarData}">
-		<s:Button click="onToolBarlickHandler(event)" label="{_toolBarRepeater.currentItem.@label}" name="{_toolBarRepeater.currentItem.@name}" icon="/assets/test.png" toolTip="{_toolBarRepeater.currentItem.@label}"/>
-		</mx:Repeater>
-		</mx:ToolBar>
-		-->
 		<s:HGroup width="100%" height="100%">
 			<classification:Classification width="200" height="100%" id="_classification"/>
-			<video:VideoPreviewContainer width="100%" height="100%" id="_videoPreviewContainer"/>
-			<!--
-			<selector:GenresSelector id="_genresSelector" width="200" height="100%"/>
 			<s:Group width="100%" height="100%">
-			<videoContainer:VideoContainer id="_videoContainer" width="100%" height="100%"/>
-			<s:VGroup width="100%" height="100%" id="_actressContainer" visible="false">
-			<actressContainer:ActressDetail width="100%" height="200" id="_actressDetail"/>
-			<videoContainer:VideoContainer id="_actressVideoContainer" width="100%" height="100%"/>
-			</s:VGroup>
+				<video:VideoPreviewContainer width="100%" height="100%" id="_videoPreviewContainer"/>
+				<actress:ActressPreviewContainer width="100%" height="100%" id="_actressPreviewContainer" visible="false"/>
 			</s:Group>
-			-->
 		</s:HGroup>
 	</s:VGroup>
 </s:WindowedApplication>

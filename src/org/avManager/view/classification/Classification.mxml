@@ -5,14 +5,22 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import mx.events.IndexChangedEvent;
+			
 			import org.avManager.events.ClassificationEvent;
+			import org.avManager.events.VideoClassificationEvent;
 			import org.avManager.model.ClassificationManager;
 			
 			import spark.events.IndexChangeEvent;
 			
 			private function onClassifyListChangeHandler(event:IndexChangeEvent):void
 			{
-				this.dispatchEvent(new ClassificationEvent(ClassificationEvent.SELECTED, ClassificationManager.instance.getClassificationByIndex(event.newIndex).name));
+				this.dispatchEvent(new VideoClassificationEvent(VideoClassificationEvent.SELECTED, ClassificationManager.instance.getClassificationByIndex(event.newIndex).name));
+			}
+			
+			private function onTabnavigatorChangeHandler(event:IndexChangedEvent):void
+			{
+				this.dispatchEvent(new ClassificationEvent(ClassificationEvent.SWITCH, event.newIndex));				
 			}
 			
 		]]>
@@ -21,7 +29,13 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<!--<mx:Tree id="_classifyTree" width="100%" height="100%" labelField="@name" showRoot="false" click="onclassifyFilter(event)"/>-->
-	<s:Label height="20" width="100%" textAlign="left" verticalAlign="middle" text="类 别"/>
-	<s:List dataProvider="{ClassificationManager.instance.classificationDataList}" width="100%" labelField="name" height="100%" change="onClassifyListChangeHandler(event)"/>
+	<mx:TabNavigator width="100%" height="100%" change="onTabnavigatorChangeHandler(event)">
+		<s:NavigatorContent width="100%" height="100%" label="影片分类">
+			<s:List dataProvider="{ClassificationManager.instance.classificationDataList}" width="100%" labelField="name" height="100%" change="onClassifyListChangeHandler(event)"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="女优名鉴">
+			<!--<s:List dataProvider="{ClassificationManager.instance.classificationDataList}" width="100%" labelField="name" height="100%" change="onClassifyListChangeHandler(event)"/>-->
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+	<!--<s:Label height="20" width="100%" textAlign="left" verticalAlign="middle" text="类 别"/>-->
 </s:VGroup>

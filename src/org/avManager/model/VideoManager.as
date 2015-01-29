@@ -14,6 +14,8 @@ package org.avManager.model
 		
 		private var _videoDataList:ArrayCollection = new ArrayCollection();
 		
+		private var _initCallback:Function;
+		
 		private var _saveIndex:int = 0;
 		
 		private var _saveCallback:Function;
@@ -23,7 +25,8 @@ package org.avManager.model
 			
 		}
 		
-		public function init():void{
+		public function init(callback:Function):void{
+			_initCallback = callback;
 			SQLiteManager.instance.videoTable.query(onQuery);
 		}
 		
@@ -45,6 +48,7 @@ package org.avManager.model
 				videoData.torrent = data.TORRENT;
 				this._videoDataList.addItem(videoData);
 			}
+			_initCallback();
 		}
 		
 		public function save(callback:Function = null):void{

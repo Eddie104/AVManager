@@ -12,6 +12,8 @@ package org.avManager.model
 		[Bindable]
 		private var _classificationDataList:ArrayCollection = new ArrayCollection();
 		
+		private var _initCallback:Function;
+		
 		private var _saveIndex:int = 0;
 		
 		private var _saveCallback:Function;
@@ -20,18 +22,13 @@ package org.avManager.model
 		{
 		}
 		
-		public function init():void{
-			// 添加一个“所有”的类别
-			var classificationData:ClassificationData = new ClassificationData(-1);
-			classificationData.name = "所有";
-			this._classificationDataList.addItem(classificationData);
+		public function init(callback:Function):void{
+			_initCallback = callback;
 			SQLiteManager.instance.classificationTable.query(onQuery);
 		}
 		
 		public function save(callback:Function = null):void{
 			_saveCallback = callback;
-			// 第一个是“所有”类别，不用存进数据库，所以索引值从1开始
-			_saveIndex = 1;
 			this.saveClassificationData();
 		}
 		
@@ -90,6 +87,7 @@ package org.avManager.model
 				classificationData.name = result[i].NAME;
 				this._classificationDataList.addItem(classificationData);
 			}
+			_initCallback();
 		}
 		
 		public function get classificationDataList():ArrayCollection

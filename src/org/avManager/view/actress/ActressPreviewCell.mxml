@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="100" height="124">
+	<fx:Script>
+		<![CDATA[
+			import org.avManager.model.data.ActressData;
+			
+			[Bindable]
+			private var _actressData:ActressData;
+			
+			public function set actressData(value:ActressData):void
+			{
+				_actressData = value;
+				
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Image width="100" height="100" source="{_actressData ? _actressData.portrait : null}"/>
+	<s:Label text="{_actressData ? _actressData.name : '--'}" width="100%" height="24" verticalAlign="middle"/>
+</s:VGroup>

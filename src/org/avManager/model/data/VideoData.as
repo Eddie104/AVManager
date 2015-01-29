@@ -55,6 +55,7 @@ package org.avManager.model.data
 		{
 			var loaderInfo:LoaderInfo = event.target as LoaderInfo;
 			loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onLoadIOError);
+			loaderInfo.removeEventListener(Event.COMPLETE, onLoadCoverCompleted);
 			Logger.error(event.text);
 		}
 		
