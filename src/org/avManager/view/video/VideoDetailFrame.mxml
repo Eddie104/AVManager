@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <components:AVWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					 xmlns:s="library://ns.adobe.com/flex/spark" 
-					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800">
+					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800" xmlns:video="org.avManager.view.video.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
@@ -173,10 +173,12 @@
 				<s:Label width="80" height="24" text="发行时间:" verticalAlign="middle"/>
 				<s:Label text="{_videoData ? DateUtil.toString(_videoData.date) : null}" verticalAlign="middle" height="100%"/>
 			</s:HGroup>
+			<s:HGroup width="100%" height="24">
+				<s:Label width="100%" height="100%" text="种子下载:" verticalAlign="middle"/>
+			</s:HGroup>
 			<mx:ToolBar width="100%" height="100%">
 				<mx:Repeater id="_torrentContainer" width="100%" height="100%" dataProvider="{_videoData ? _videoData.torrentList : null}">
-					<!--<videoDetailFrame:TorrentUrlContainer width="100%" height="100%" torrentUrl="{_torrentContainer.currentItem}"/>-->
-					<s:Label text="{_torrentContainer.currentItem}"/>
+					<video:TorrentContainer torrentUrl="{_torrentContainer.currentItem}" width="100%" height="100%"/>
 				</mx:Repeater>
 			</mx:ToolBar>
 		</s:VGroup>

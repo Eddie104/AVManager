@@ -86,12 +86,28 @@ package org.avManager.model.data
 			this._classification.push(classification.id);
 		}
 		
+		public function getClassificationStr():String{
+			var s:String = "";
+			for(var i:int = 0;i < _classificationList.length; i++){
+				s += s ? " " + _classificationList[i].name : _classificationList[i].name; 
+			}
+			return s;
+		}
+		
+		public function hasClassification(classificationName:String):Boolean{
+			for(var i:int = 0;i < _classificationList.length; i++){
+				if(_classificationList[i].name == classificationName) return true; 
+			}
+			return false;
+		}
+		
 		[SQLData(cloName="VIDEO_ID")]
 		public function get videoID():String
 		{
 			return _videoID;
 		}
 
+		[Bindable]
 		public function set videoID(value:String):void
 		{
 			_videoID = value;
@@ -126,7 +142,8 @@ package org.avManager.model.data
 		{
 			return _coverSub;
 		}
-
+		
+		[Bindable]
 		public function set coverSub(value:BitmapData):void
 		{
 			_coverSub = value;

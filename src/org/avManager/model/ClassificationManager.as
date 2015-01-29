@@ -21,11 +21,17 @@ package org.avManager.model
 		}
 		
 		public function init():void{
+			// 添加一个“所有”的类别
+			var classificationData:ClassificationData = new ClassificationData(-1);
+			classificationData.name = "所有";
+			this._classificationDataList.addItem(classificationData);
 			SQLiteManager.instance.classificationTable.query(onQuery);
 		}
 		
 		public function save(callback:Function = null):void{
 			_saveCallback = callback;
+			// 第一个是“所有”类别，不用存进数据库，所以索引值从1开始
+			_saveIndex = 1;
 			this.saveClassificationData();
 		}
 		

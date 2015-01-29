@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" creationComplete="onCreationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import org.avManager.model.data.VideoData;
+			
+			private const TOTAL_NUM:int = 36;
+			private const GAP_X:int = 152;
+			private const GAP_Y:int = 322;
+			
+			private var _curCols:int = 0;
+			
+			private var _videoCellList:Vector.<VideoPreviewCell>;
+			
+			[Bindable]
+			private var _curPage:int = 0;
+			
+			[Bindable]
+			private var _totalPage:int = 0;
+			
+			private var _videoDataList:Vector.<VideoData>;
+			
+			public function updateVideoList(list:Vector.<VideoData>):void{
+				this._videoDataList = list;
+				_curPage = 1;
+				_totalPage = Math.ceil(this._videoCellList.length / TOTAL_NUM);
+				this.updatePage();
+			}
+			
+			private function onCreationCompleteHandler(event:FlexEvent):void
+			{
+				this.addEventListener(Event.RESIZE, onResize);
+				
+				_videoCellList = new Vector.<VideoPreviewCell>(TOTAL_NUM);
+				var cell:VideoPreviewCell;
+				for(var i:int = 0;i < TOTAL_NUM; i++){
+					cell = new VideoPreviewCell();
+					_videoCellList[i] = cell;
+					this._container.addElement(cell);
+				}
+				onResize(null);
+			}
+			
+			private function onResize(event:ResizeEvent):void
+			{
+				const cols:int = int(this.width / 150);
+				if(_curCols != cols){
+					_curCols == cols;
+					var cell:VideoPreviewCell;
+					for(var i:int = 0;i < TOTAL_NUM; i++){
+						cell = _videoCellList[i];
+						cell.x = (i % cols) * GAP_X;
+						cell.y = int(i / cols) * GAP_Y;
+					}
+				}
+			}
+			
+			private function onPrevPageHandler(event:MouseEvent):void
+			{
+				if(this._curPage > 1){
+					--this._curPage;
+					updatePage();
+				}
+			}
+			
+			private function onNextPageHandler(event:MouseEvent):void
+			{
+				if(this._curPage < this._totalPage){
+					++this._curPage;
+					updatePage();
+				}
+			}
+			
+			private function updatePage():void{
+				var startIndex:int = (this._curPage - 1) * TOTAL_NUM;
+				var endIndex:int = startIndex + TOTAL_NUM - 1;
+				if(endIndex >= this._videoDataList.length){
+					endIndex = this._videoDataList.length - 1
+				}
+				var index:int = 0;
+				for(var i:int = startIndex; i<= endIndex; i++){
+					this._videoCellList[index++].videoData = this._videoDataList[i];
+				}
+				for(; index < TOTAL_NUM;index++){
+					this._videoCellList[index].videoData = null;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:HGroup width="100%" height="24" horizontalAlign="right">
+		<s:Button x="1008" width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>
+		<s:Label x="1114" width="48" height="100%" text="{_curPage + '/' + _totalPage}" textAlign="center"
+				 verticalAlign="middle"/>
+		<s:Button label="下一页" width="70" height="100%" click="onNextPageHandler(event)"/>
+	</s:HGroup>
+	<s:Scroller width="100%" height="100%">
+		<s:Group width="100%" height="100%" id="_container"/>
+	</s:Scroller>
+</s:VGroup>

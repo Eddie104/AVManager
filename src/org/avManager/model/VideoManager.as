@@ -78,6 +78,16 @@ package org.avManager.model
 			return null;
 		}
 		
+		public function getVideoDataListByClassification(classificationName:String):Vector.<VideoData>{
+			var list:Vector.<VideoData> = new Vector.<VideoData>();
+			for each(var videoData:VideoData in this._videoDataList){
+				if(!classificationName || classificationName == "所有" || videoData.hasClassification(classificationName)){
+					list.push(videoData);
+				}
+			}
+			return list;
+		}
+		
 		public function createVideoID(videoID:String):VideoData{
 			var videoData:VideoData = getVideoDataByVideoID(videoID);
 			if(!videoData){
