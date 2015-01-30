@@ -86,6 +86,7 @@ package org.avManager.model
 				classificationData.needInsert = false;
 				classificationData.name = result[i].NAME;
 				this._classificationDataList.addItem(classificationData);
+				classificationData.needUpdate = false;
 			}
 			_initCallback();
 		}

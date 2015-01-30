@@ -46,7 +46,9 @@ package org.avManager.model
 				videoData.date = data.DATE;
 				videoData.videoID = data.VIDEO_ID;
 				videoData.torrent = data.TORRENT;
+				videoData.actress = data.ACTRESS;
 				this._videoDataList.addItem(videoData);
+				videoData.needUpdate = false;
 			}
 			_initCallback();
 		}

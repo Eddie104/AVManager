@@ -10,6 +10,7 @@ package org.avManager.model.data
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.avManager.model.ActressManager;
 	import org.avManager.model.ClassificationManager;
 	import org.libra.log4a.Logger;
 
@@ -29,6 +30,11 @@ package org.avManager.model.data
 		private var _classification:Array = [];
 		
 		private var _torrent:String;
+		
+		private var _actress:String;
+		
+		[Bindable]
+		private var _actressDataList:ArrayCollection = new ArrayCollection;
 		
 		[Bindable]
 		private var _torrentList:ArrayCollection = new ArrayCollection();
@@ -112,6 +118,7 @@ package org.avManager.model.data
 		public function set videoID(value:String):void
 		{
 			_videoID = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="DATE")]
@@ -124,6 +131,7 @@ package org.avManager.model.data
 		public function set date(value:Date):void
 		{
 			_date = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(type="BitmapData",cloName="COVER")]
@@ -136,6 +144,7 @@ package org.avManager.model.data
 		public function set cover(value:BitmapData):void
 		{
 			_cover = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(type="BitmapData",cloName="COVER_SUB")]
@@ -148,6 +157,7 @@ package org.avManager.model.data
 		public function set coverSub(value:BitmapData):void
 		{
 			_coverSub = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(type="Array",cloName="CLASSIFICATION")]
@@ -163,6 +173,7 @@ package org.avManager.model.data
 			for each(var i:int in _classification){
 				_classificationList.push(ClassificationManager.instance.getClassificationByID(i));
 			}
+			this.needUpdate = true;
 		}
 	
 		[SQLData(cloName="TORRENT")]
@@ -175,11 +186,39 @@ package org.avManager.model.data
 		{
 			_torrent = value;
 			_torrentList.source = _torrent.split(" ");
+			this.needUpdate = true;
 		}
 
 		public function get torrentList():ArrayCollection
 		{
 			return _torrentList;
+		}
+
+		[SQLData(cloName="ACTRESS")]
+		public function get actress():String
+		{
+			return _actress;
+		}
+	
+		[Bindable]
+		public function set actress(value:String):void
+		{
+			_actress = value ? value : '';
+			this.needUpdate = true;
+			_actressDataList.removeAll();
+			var a:Array = _actress.split(" ");
+			var actressData:ActressData = null;
+			for(var i:int = 0; i < a.length; i++){
+				actressData = ActressManager.instance.getActressByName(a[i]);
+				if(actressData){
+					_actressDataList.addItem(actressData);					
+				}
+			}
+		}
+
+		public function get actressDataList():ArrayCollection
+		{
+			return _actressDataList;
 		}
 
 

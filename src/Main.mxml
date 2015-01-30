@@ -33,16 +33,15 @@
 			}
 			
 			private function onSqlInited():void{
-				ClassificationManager.instance.init(this.initVideoManager);
-			}
-			
-			private function initVideoManager():void{
-				VideoManager.instance.init(this.initActressManager);
-				
+				ClassificationManager.instance.init(this.initActressManager);
 			}
 			
 			private function initActressManager():void{
-				ActressManager.instance.init(this.inited);
+				ActressManager.instance.init(this.initVideoManager);
+			}
+			
+			private function initVideoManager():void{
+				VideoManager.instance.init(this.inited);
 			}
 			
 			private function inited():void{

@@ -2,7 +2,9 @@ package org.avManager.view
 {
 	import flash.display.DisplayObject;
 	
+	import org.avManager.model.data.ActressData;
 	import org.avManager.view.about.About;
+	import org.avManager.view.actress.ActressDetailFrame;
 	import org.avManager.view.video.VideoDetailFrame;
 	import org.libra.flex.utils.PopUpUtil;
 
@@ -15,6 +17,8 @@ package org.avManager.view
 		private var _about:About;
 		
 		private var _videoDetailFrame:VideoDetailFrame
+		
+		private var _actressDetailFrame:ActressDetailFrame;
 		
 		public function UIManager(t:T)
 		{
@@ -33,6 +37,12 @@ package org.avManager.view
 		public function showVideoDetailFrame():void{
 			if(!_videoDetailFrame) _videoDetailFrame = new VideoDetailFrame();
 			PopUpUtil.instance.addPopUp(this._videoDetailFrame, this._uiRoot, true, 1);			
+		}
+		
+		public function showActressDetailFrame(actressData:ActressData = null):void{
+			if(!_actressDetailFrame) _actressDetailFrame = new ActressDetailFrame();
+			_actressDetailFrame.actressData = actressData;
+			PopUpUtil.instance.addPopUp(this._actressDetailFrame, this._uiRoot, true, 1);
 		}
 		
 		public static function get instance():UIManager{

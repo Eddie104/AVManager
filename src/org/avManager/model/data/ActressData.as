@@ -34,6 +34,8 @@ package org.avManager.model.data
 		
 		private var _age:int;
 		
+		private var _workCount:int;
+		
 		public function ActressData(id:int)
 		{
 			super(id);
@@ -74,6 +76,7 @@ package org.avManager.model.data
 		public function set actressID(value:String):void
 		{
 			_actressID = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="BIRTHDAY")]
@@ -82,10 +85,12 @@ package org.avManager.model.data
 			return _birthday;
 		}
 
+		[Bindable]
 		public function set birthday(value:Date):void
 		{
 			_birthday = value;
 			_age = Config.instance.now.fullYear - value.fullYear;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="HEIGHT")]
@@ -94,9 +99,11 @@ package org.avManager.model.data
 			return _height;
 		}
 
+		[Bindable]
 		public function set height(value:int):void
 		{
 			_height = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="CUP")]
@@ -105,9 +112,11 @@ package org.avManager.model.data
 			return _cup;
 		}
 
+		[Bindable]
 		public function set cup(value:String):void
 		{
 			_cup = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="BUST")]
@@ -116,9 +125,11 @@ package org.avManager.model.data
 			return _bust;
 		}
 
+		[Bindable]
 		public function set bust(value:int):void
 		{
 			_bust = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="WAIST")]
@@ -127,9 +138,11 @@ package org.avManager.model.data
 			return _waist;
 		}
 
+		[Bindable]
 		public function set waist(value:int):void
 		{
 			_waist = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="HIP")]
@@ -138,9 +151,11 @@ package org.avManager.model.data
 			return _hip;
 		}
 
+		[Bindable]
 		public function set hip(value:int):void
 		{
 			_hip = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="PORTRAIT",type="BitmapData")]
@@ -153,11 +168,17 @@ package org.avManager.model.data
 		public function set portrait(value:BitmapData):void
 		{
 			_portrait = value;
+			this.needUpdate = true;
 		}
 
 		public function get age():int
 		{
 			return _age;
+		}
+
+		public function get workCount():int
+		{
+			return _workCount;
 		}
 
 

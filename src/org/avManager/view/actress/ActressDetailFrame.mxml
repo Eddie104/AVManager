@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:AVWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" 
+					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800">
+	<fx:Script>
+		<![CDATA[
+			import org.avManager.model.data.ActressData;
+			import org.libra.utils.DateUtil;
+			
+			[Bindable]
+			private var _actressData:ActressData;
+			
+			private var _curHtmlPage:int = 1;
+
+			public function set actressData(value:ActressData):void
+			{
+				_actressData = value;
+				_curHtmlPage = 1
+			}
+
+			protected function onUpdateWorkHandler(event:MouseEvent):void
+			{
+				loadHtml();
+			}
+			
+			private function loadHtml():void{
+				var urlLoader:URLLoader = new URLLoader();
+				urlLoader.addEventListener(Event.COMPLETE, onLoaded);
+				urlLoader.load(new URLRequest("http://www.avdb.im/star/" + _actressData.actressID + "/currentPage/" + _curHtmlPage));
+			}
+			
+			protected function onLoaded(event:Event):void
+			{
+				var urlLoader:URLLoader = event.target as URLLoader;
+				urlLoader.removeEventListener(Event.COMPLETE, onLoaded);
+				var html:String = urlLoader.data;
+				var a:Array = html.match(/<a href=\"\/movie.*<\/div>/g);
+				for each(var s:String in a){
+					trace(s.match(/\w+-\d+/));
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Scroller width="100%" height="100%">
+		<s:Group width="100%" height="100%">
+			<s:VGroup width="150" height="320">
+				<s:HGroup width="100%" height="100" horizontalAlign="center">
+					<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
+				</s:HGroup>
+				<s:Label text="{_actressData ? _actressData.name : '--'}" textAlign="center" verticalAlign="middle" width="100%" height="24"/>
+				<s:HGroup width="100%" height="24">
+					<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					<s:Label text="身高:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.height : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+				</s:HGroup>
+				<s:HGroup width="100%" height="24">
+					<s:Label text="生日:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? DateUtil.toString(_actressData.birthday) : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+				</s:HGroup>
+				<s:HGroup width="100%" height="24">
+					<s:Label text="年龄:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.age : '--'}" verticalAlign="middle" width="100%" height="100%"/>					
+				</s:HGroup>
+				<s:HGroup width="100%" height="24">
+					<s:Label text="罩杯:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.cup : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					<s:Label text="胸围:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.bust : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+				</s:HGroup>
+				<s:HGroup width="100%" height="24">
+					<s:Label text="腰围:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.waist : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					<s:Label text="臀围:" verticalAlign="middle" width="40" height="100%"/>
+					<s:Label text="{_actressData ? _actressData.hip : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+				</s:HGroup>
+				<s:HGroup width="100%" height="100%" horizontalAlign="center">
+					<s:Button label="更新作品" click="onUpdateWorkHandler(event)"/>
+				</s:HGroup>
+			</s:VGroup>			
+		</s:Group>	
+	</s:Scroller>
+</components:AVWindow>

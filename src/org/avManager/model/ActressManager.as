@@ -46,6 +46,7 @@ package org.avManager.model
 				actressData.portrait = BitmapBytes.byteArrayToBitmapData(data.PORTRAIT);
 				actressData.waist = data.WAIST;
 				this._actressList.addItem(actressData);
+				actressData.needUpdate = false;
 			}
 			_initCallback();
 		}
@@ -79,6 +80,13 @@ package org.avManager.model
 				list.push(actress);
 			}
 			return list;
+		}
+		
+		public function getActressByName(name:String):ActressData{
+			for each(var actress:ActressData in _actressList){
+				if(actress.name == name) return actress;
+			}
+			return null;	
 		}
 		
 		public function getActressByActressID(id:String):ActressData{

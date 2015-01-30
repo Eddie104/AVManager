@@ -48,7 +48,6 @@
 				urlLoader.removeEventListener(Event.COMPLETE, onSearchCompleted);
 				urlLoader.removeEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
 				Logger.error(event.text);
-//				this.dispatchEvent(new LoadingEvent(LoadingEvent.CLOSE));
 				Alert.show("暂无法从数据源网站获取数据，稍后再试！");
 			}
 			
@@ -95,11 +94,7 @@
 					}
 					
 					// 获取演员
-//					var castStr:String = getContentFromHtml("演员", html);
-//					this._spideringVideoData.cast = castStr;
-//					if(castStr == "null"){
-//						info += "\n无法获取演员";
-//					}
+					this._videoData.actress = getContentFromHtml("演员", html);
 					
 					// 获取制作商
 //					this._spideringVideoData.maker = getContentFromHtml("制作商", html);
@@ -132,8 +127,6 @@
 						}
 						this._videoData.torrent = s;	
 					}
-					
-//					this.dispatchEvent(new VideoDataEvent(VideoDataEvent.UPDATE_VIDEO_COMPLETED, this._spideringVideoData));
 					
 					function getContentFromHtml(tag:String, html:String):String{
 						var reg:String  ='<tr>\\s*.*' + tag + '.*\\s*.*\\s*.*\\s*</tr>';
@@ -173,6 +166,16 @@
 				<s:Label width="80" height="24" text="发行时间:" verticalAlign="middle"/>
 				<s:Label text="{_videoData ? DateUtil.toString(_videoData.date) : null}" verticalAlign="middle" height="100%"/>
 			</s:HGroup>
+			<s:HGroup width="100%" height="24">
+				<s:Label width="80" height="100%" text="艺术表演者:" verticalAlign="middle"/>
+				<s:Label width="100%" height="100%" text="{_videoData ? _videoData.actress : '--'}" verticalAlign="middle"/>
+			</s:HGroup>
+			<mx:ToolBar width="100%" height="100%">
+				<mx:Repeater id="_actressContainer" width="100%" height="100%" dataProvider="{_videoData ? _videoData.actressDataList : null}">
+					<!--<video:TorrentContainer torrentUrl="{_actressContainer.currentItem}" width="100%" height="100%"/>-->
+					<video:ActressContainer actressData="{_actressContainer.currentItem}" width="100" height="124"/>
+				</mx:Repeater>
+			</mx:ToolBar>
 			<s:HGroup width="100%" height="24">
 				<s:Label width="100%" height="100%" text="种子下载:" verticalAlign="middle"/>
 			</s:HGroup>

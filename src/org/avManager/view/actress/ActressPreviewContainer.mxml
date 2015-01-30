@@ -13,6 +13,7 @@
 			
 			import org.avManager.model.ActressManager;
 			import org.avManager.model.data.ActressData;
+			import org.avManager.view.UIManager;
 			import org.libra.log4a.Logger;
 			
 			private static const TOTAL_NUM:int = 60;
@@ -179,6 +180,7 @@
 					cell = new ActressPreviewCell();
 					_actressCellList[i] = cell;
 					this._container.addElement(cell);
+					cell.addEventListener(MouseEvent.CLICK, onCellClicked);
 				}
 				onResize(null);
 			}
@@ -210,6 +212,12 @@
 				for(; index < TOTAL_NUM;index++){
 					this._actressCellList[index].actressData = null;
 				}
+			}
+			
+			protected function onCellClicked(event:MouseEvent):void
+			{
+				var cell:ActressPreviewCell = event.currentTarget as ActressPreviewCell;
+				UIManager.instance.showActressDetailFrame(cell.actressData);
 			}
 			
 		]]>

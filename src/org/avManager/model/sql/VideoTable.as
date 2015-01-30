@@ -19,7 +19,7 @@ package org.avManager.model.sql
 		override protected function init():void{
 			super.init();
 			_insertStatement.text = "INSERT INTO " + _tableName + 
-				" (NAME, VIDEO_ID, DATE, COVER, COVER_SUB, CLASSIFICATION, TORRENT) VALUES (@name, @videoID, @date, @cover, @coverSub, @classification, @torrent)";
+				" (NAME, VIDEO_ID, DATE, COVER, COVER_SUB, CLASSIFICATION, TORRENT, ACTRESS) VALUES (@name, @videoID, @date, @cover, @coverSub, @classification, @torrent, @actress)";
 			
 			var keyList:Vector.<String> = new Vector.<String>();
 			keyList[0] = "ID INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -30,6 +30,7 @@ package org.avManager.model.sql
 			keyList[5] = "COVER_SUB BLOB";
 			keyList[6] = "CLASSIFICATION BLOB";
 			keyList[7] = "TORRENT VARCHAR";
+			keyList[8] = "ACTRESS VARCHAR";
 			_createSql = "CREATE TABLE IF NOT EXISTS " + _tableName + " (";
 			const l:int = keyList.length;
 			for(var i:int = 0;i < l;i++){
@@ -45,6 +46,7 @@ package org.avManager.model.sql
 			_insertStatement.parameters["@videoID"] = videoData.videoID;
 			_insertStatement.parameters["@date"] = videoData.date;
 			_insertStatement.parameters["@torrent"] = videoData.torrent;
+			_insertStatement.parameters["@actress"] = videoData.actress;
 			_insertStatement.parameters["@cover"] = BitmapBytes.bitmapDataToByteArray(videoData.cover);
 			_insertStatement.parameters["@coverSub"] = BitmapBytes.bitmapDataToByteArray(videoData.coverSub);
 			var b:ByteArray = new ByteArray();

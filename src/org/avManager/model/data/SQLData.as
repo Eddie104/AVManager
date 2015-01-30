@@ -31,6 +31,7 @@ package org.avManager.model.data
 		public function set name(value:String):void
 		{
 			_name = value;
+			this.needUpdate = true;
 		}
 
 		public function get needInsert():Boolean
