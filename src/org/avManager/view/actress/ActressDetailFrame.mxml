@@ -4,18 +4,94 @@
 					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800">
 	<fx:Script>
 		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.avManager.model.VideoManager;
 			import org.avManager.model.data.ActressData;
+			import org.avManager.model.data.VideoData;
+			import org.avManager.view.UIManager;
+			import org.avManager.view.video.VideoPreviewCell;
+			import org.libra.log4a.Logger;
 			import org.libra.utils.DateUtil;
+			
+			private const TOTAL_NUM:int = 35;
+			
+			private const GAP_X:int = 152;
+			private const GAP_Y:int = 322; 
 			
 			[Bindable]
 			private var _actressData:ActressData;
 			
 			private var _curHtmlPage:int = 1;
+			
+			private var _videoCellList:Vector.<ActressVideoPreviewCell>;
+			
+			private var _curCols:int = 0;
+			
+			[Bindable]
+			private var _curPage:int;
+			
+			[Bindable]
+			private var _totalPage:int;
 
 			public function set actressData(value:ActressData):void
 			{
 				_actressData = value;
-				_curHtmlPage = 1
+				_curHtmlPage = 1;
+				_curPage = 1;
+				_totalPage = Math.ceil(this._actressData.video.length / TOTAL_NUM);
+				this.updatePage();
+			}
+			
+			private function updatePage():void{
+				var startIndex:int = (this._curPage - 1) * TOTAL_NUM;
+				var endIndex:int = startIndex + TOTAL_NUM - 1;
+				if(endIndex >= this._actressData.video.length){
+					endIndex = this._actressData.video.length - 1
+				}
+				var index:int = 0;
+				var videoData:VideoData;
+				for(var i:int = startIndex; i<= endIndex; i++){
+					videoData = VideoManager.instance.getVideoDataByVideoID(this._actressData.video[i]);
+					if(videoData){
+						this._videoCellList[index++].videoData = videoData;
+					}else{
+						this._videoCellList[index++].videoID = this._actressData.video[i];
+					}
+				}
+				for(; index < TOTAL_NUM;index++){
+					this._videoCellList[index].videoData = null;
+				}
+			}
+			
+			override protected function onCreationCompleteHandler(event:FlexEvent):void
+			{
+				super.onCreationCompleteHandler(event);
+				
+				_videoCellList = new Vector.<ActressVideoPreviewCell>(TOTAL_NUM);
+				var cell:ActressVideoPreviewCell;
+				for(var i:int = 0;i < TOTAL_NUM; i++){
+					cell = new ActressVideoPreviewCell();
+					_videoCellList[i] = cell;
+					this._container.addElement(cell);
+					cell.addEventListener(MouseEvent.CLICK, onCellClicked);
+				}
+				onResize(null);
+			}
+			
+			override protected function onResize(event:Event):void
+			{
+				super.onResize(event);
+				const cols:int = int(this.width / 150);
+				if(_curCols != cols){
+					_curCols == cols;
+					var cell:VideoPreviewCell;
+					for(var i:int = 0;i < TOTAL_NUM; i++){
+						cell = _videoCellList[i];
+						cell.x = ((i + 1) % cols) * GAP_X;
+						cell.y = int((i + 1) / cols) * GAP_Y;
+					}
+				}
 			}
 
 			protected function onUpdateWorkHandler(event:MouseEvent):void
@@ -36,7 +112,37 @@
 				var html:String = urlLoader.data;
 				var a:Array = html.match(/<a href=\"\/movie.*<\/div>/g);
 				for each(var s:String in a){
-					trace(s.match(/\w+-\d+/));
+					_actressData.addVideo(s.match(/\w+-\d+/).toString());					
+				}
+				
+				if(html.indexOf("下一页") == -1){
+					Logger.info("更新作品完毕");
+				}else{
+					_curHtmlPage++;
+					Logger.info("开始更新第" + _curHtmlPage + "页");
+					loadHtml();					
+				}
+			}
+			
+			protected function onCellClicked(event:MouseEvent):void
+			{
+				var cell:ActressVideoPreviewCell = event.currentTarget as ActressVideoPreviewCell;
+				UIManager.instance.showVideoDetailFrame(cell.videoID, cell.videoData);
+			}
+			
+			protected function onPrevPageHandler(event:MouseEvent):void
+			{
+				if(this._curPage > 1){
+					--this._curPage;
+					updatePage();
+				}
+			}
+			
+			protected function onNextPageHandler(event:MouseEvent):void
+			{
+				if(this._curPage < this._totalPage){
+					++this._curPage;
+					updatePage();
 				}
 			}
 			
@@ -45,43 +151,50 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Scroller width="100%" height="100%">
-		<s:Group width="100%" height="100%">
-			<s:VGroup width="150" height="320">
-				<s:HGroup width="100%" height="100" horizontalAlign="center">
-					<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
-				</s:HGroup>
-				<s:Label text="{_actressData ? _actressData.name : '--'}" textAlign="center" verticalAlign="middle" width="100%" height="24"/>
-				<s:HGroup width="100%" height="24">
-					<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-					<s:Label text="身高:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.height : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-				</s:HGroup>
-				<s:HGroup width="100%" height="24">
-					<s:Label text="生日:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? DateUtil.toString(_actressData.birthday) : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-				</s:HGroup>
-				<s:HGroup width="100%" height="24">
-					<s:Label text="年龄:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.age : '--'}" verticalAlign="middle" width="100%" height="100%"/>					
-				</s:HGroup>
-				<s:HGroup width="100%" height="24">
-					<s:Label text="罩杯:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.cup : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-					<s:Label text="胸围:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.bust : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-				</s:HGroup>
-				<s:HGroup width="100%" height="24">
-					<s:Label text="腰围:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.waist : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-					<s:Label text="臀围:" verticalAlign="middle" width="40" height="100%"/>
-					<s:Label text="{_actressData ? _actressData.hip : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-				</s:HGroup>
-				<s:HGroup width="100%" height="100%" horizontalAlign="center">
-					<s:Button label="更新作品" click="onUpdateWorkHandler(event)"/>
-				</s:HGroup>
-			</s:VGroup>			
-		</s:Group>	
-	</s:Scroller>
+	<s:VGroup width="100%" height="100%">
+		<s:HGroup width="100%" height="24" horizontalAlign="right">
+			<s:Button label="上一页" click="onPrevPageHandler(event)"/>
+			<s:Label height="100%" text="{_curPage + '/' + _totalPage}" verticalAlign="middle"/>
+			<s:Button label="下一页" click="onNextPageHandler(event)"/>
+		</s:HGroup>
+		<s:Scroller width="100%" height="100%">
+			<s:Group width="100%" height="100%" id="_container">
+				<s:VGroup width="150" height="320">
+					<s:HGroup width="100%" height="100" horizontalAlign="center">
+						<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
+					</s:HGroup>
+					<s:Label text="{_actressData ? _actressData.name : '--'}" textAlign="center" verticalAlign="middle" width="100%" height="24"/>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:Label text="身高:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.height : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="生日:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? DateUtil.toString(_actressData.birthday) : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="年龄:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.age : '--'}" verticalAlign="middle" width="100%" height="100%"/>					
+					</s:HGroup>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="罩杯:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.cup : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:Label text="胸围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.bust : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="腰围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.waist : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:Label text="臀围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="{_actressData ? _actressData.hip : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="100%" horizontalAlign="center">
+						<s:Button label="更新作品" click="onUpdateWorkHandler(event)"/>
+					</s:HGroup>
+				</s:VGroup>			
+			</s:Group>
+		</s:Scroller>
+	</s:VGroup>
 </components:AVWindow>

@@ -26,7 +26,6 @@
 			protected function onResize(event:Event):void {
 				this.width = this.stage.stageWidth;
 				this.height = this.stage.stageHeight;
-				this.draw();
 			}
 			
 			/**
@@ -37,13 +36,9 @@
 			}
 			
 			protected function onCreationCompleteHandler(event:FlexEvent):void {
-				draw();
-			}
-			
-			protected function draw():void
-			{
 				
 			}
+			
 			
 		]]>
 	</fx:Script>

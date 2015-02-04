@@ -24,6 +24,10 @@
 				_videoData = value;
 			}
 			
+			public function set videoDataID(val:String):void{
+				if(val) _videoIDInput.text = val;
+			}
+			
 			protected function onSearchHandler(event:MouseEvent):void
 			{
 				this._videoID = _videoIDInput.text;

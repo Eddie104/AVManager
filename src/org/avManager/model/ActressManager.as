@@ -1,5 +1,7 @@
 package org.avManager.model
 {
+	import flash.utils.ByteArray;
+	
 	import mx.collections.ArrayCollection;
 	
 	import org.avManager.model.data.ActressData;
@@ -45,6 +47,10 @@ package org.avManager.model
 				actressData.hip = data.HIP;
 				actressData.portrait = BitmapBytes.byteArrayToBitmapData(data.PORTRAIT);
 				actressData.waist = data.WAIST;
+				var b:ByteArray = data.VIDEO;
+				if(b){
+					actressData.video = b.readObject();
+				}
 				this._actressList.addItem(actressData);
 				actressData.needUpdate = false;
 			}

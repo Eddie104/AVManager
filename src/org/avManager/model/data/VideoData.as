@@ -185,7 +185,7 @@ package org.avManager.model.data
 		public function set torrent(value:String):void
 		{
 			_torrent = value;
-			_torrentList.source = _torrent.split(" ");
+			_torrentList.source = _torrent ? _torrent.split(" ") : [];
 			this.needUpdate = true;
 		}
 

@@ -28,8 +28,7 @@
 			[Bindable]
 			private var _totalPage:int = 0;
 			
-			//上一次更新到5页，所以下一次从第6页开始
-			private var _curHtmlPage:int = 15;
+			private var _curHtmlPage:int = 61;
 			
 			private var _actressList:Array;
 			
@@ -119,7 +118,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 20){
+					if(++_curHtmlPage <= 80){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");

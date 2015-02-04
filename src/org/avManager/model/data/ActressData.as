@@ -1,7 +1,5 @@
 package org.avManager.model.data
 {
-	import avmplus.FLASH10_FLAGS;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
@@ -34,7 +32,10 @@ package org.avManager.model.data
 		
 		private var _age:int;
 		
+		[Bindable]
 		private var _workCount:int;
+		
+		private var _video:Array = [];
 		
 		public function ActressData(id:int)
 		{
@@ -65,6 +66,14 @@ package org.avManager.model.data
 			
 			this.portrait = (loaderInfo.content as Bitmap).bitmapData;
 			Logger.info(this._name + "的头像下好了");
+		}
+		
+		public function addVideo(videoID:String):void{
+			if(this._video.indexOf(videoID) == -1){
+				this._video.push(videoID);
+				_workCount++;
+				this.needUpdate = true;
+			}
 		}
 
 		[SQLData(cloName="ACTRESS_ID")]
@@ -179,6 +188,19 @@ package org.avManager.model.data
 		public function get workCount():int
 		{
 			return _workCount;
+		}
+
+		[SQLData(cloName="VIDEO",type="Array")]
+		public function get video():Array
+		{
+			return _video;
+		}
+
+		public function set video(value:Array):void
+		{
+			_video = value;
+			_workCount = _video ? _video.length : 0;
+			this.needUpdate = true;
 		}
 
 

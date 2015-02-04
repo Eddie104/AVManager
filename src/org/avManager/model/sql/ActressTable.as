@@ -2,6 +2,7 @@ package org.avManager.model.sql
 {
 	import flash.data.SQLConnection;
 	import flash.display.BitmapData;
+	import flash.utils.ByteArray;
 	
 	import org.avManager.model.data.ActressData;
 	import org.avManager.model.data.SQLData;
@@ -20,7 +21,7 @@ package org.avManager.model.sql
 		override protected function init():void{
 			super.init();
 			_insertStatement.text = "INSERT INTO " + _tableName + 
-				" (ACTRESS_ID, NAME, BIRTHDAY, HEIGHT, CUP, BUST, WAIST, HIP, PORTRAIT) VALUES (@actressID, @name, @birthday, @height, @cup, @bust, @waist, @hip, @portrait)";
+				" (ACTRESS_ID, NAME, BIRTHDAY, HEIGHT, CUP, BUST, WAIST, HIP, PORTRAIT, VIDEO) VALUES (@actressID, @name, @birthday, @height, @cup, @bust, @waist, @hip, @portrait, @video)";
 			
 			var keyList:Vector.<String> = new Vector.<String>();
 			keyList[0] = "ID INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -33,6 +34,7 @@ package org.avManager.model.sql
 			keyList[7] = "WAIST SMALLINT";
 			keyList[8] = "HIP SMALLINT";
 			keyList[9] = "PORTRAIT BLOB";
+			keyList[10] = "VIDEO BLOB";
 			_createSql = "CREATE TABLE IF NOT EXISTS " + _tableName + " (";
 			const l:int = keyList.length;
 			for(var i:int = 0;i < l;i++){
@@ -53,6 +55,9 @@ package org.avManager.model.sql
 			_insertStatement.parameters["@waist"] = actressData.waist;
 			_insertStatement.parameters["@hip"] = actressData.hip;
 			_insertStatement.parameters["@portrait"] = BitmapBytes.bitmapDataToByteArray(actressData.portrait);
+			var b:ByteArray = new ByteArray();
+			b.writeObject(actressData.video);
+			_insertStatement.parameters["@video"] = b;
 			_insertStatement.execute();
 		}
 		

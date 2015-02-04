@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<video:VideoPreviewCell xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						xmlns:s="library://ns.adobe.com/flex/spark" 
+						xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:video="org.avManager.view.video.*" width="150" height="320">
+	<fx:Script>
+		<![CDATA[
+			
+			public function set videoID(val:String):void{
+				if(this._videoData && this._videoData.videoID != val){
+					this.videoData = null;
+				}
+				_videoIDLabel.text = val;
+				this.visible = true;
+			}
+			
+			public function get videoID():String{
+				return _videoIDLabel.text;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</video:VideoPreviewCell>
