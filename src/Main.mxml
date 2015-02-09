@@ -28,24 +28,29 @@
 				_classification.addEventListener(VideoClassificationEvent.SELECTED, onVideoClassificationSelected);
 				_classification.addEventListener(ClassificationEvent.SWITCH, onClassificationSwitch);
 				
+//				UIManager.instance.showLoading();
 				// 初始化数据
 				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"), this.onSqlInited);
 			}
 			
 			private function onSqlInited():void{
+				Logger.info("开始初始化ClassificationManager");
 				ClassificationManager.instance.init(this.initActressManager);
 			}
 			
 			private function initActressManager():void{
+				Logger.info("开始初始化ActressManager");
 				ActressManager.instance.init(this.initVideoManager);
 			}
 			
 			private function initVideoManager():void{
+				Logger.info("开始初始化VideoManager");
 				VideoManager.instance.init(this.inited);
 			}
 			
 			private function inited():void{
 				Logger.info("所有Manager初始化完毕");
+//				UIManager.instance.closeLoading();
 			}
 			
 			protected function onCloseHandler(event:Event = null):void

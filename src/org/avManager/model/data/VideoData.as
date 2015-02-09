@@ -202,11 +202,19 @@ package org.avManager.model.data
 	
 		[Bindable]
 		public function set actress(value:String):void
-		{
+		{			
 			_actress = value ? value : '';
+			var a:Array = _actress.split(" ");
+			var l:int = a.length;
+			while(--l > -1){
+				if(a[l] == ""){
+					a.splice(l, 1);
+				}
+			}
+			_actress = a.join(" ");
 			this.needUpdate = true;
 			_actressDataList.removeAll();
-			var a:Array = _actress.split(" ");
+			
 			var actressData:ActressData = null;
 			for(var i:int = 0; i < a.length; i++){
 				actressData = ActressManager.instance.getActressByName(a[i]);

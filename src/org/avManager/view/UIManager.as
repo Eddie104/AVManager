@@ -6,6 +6,7 @@ package org.avManager.view
 	import org.avManager.model.data.VideoData;
 	import org.avManager.view.about.About;
 	import org.avManager.view.actress.ActressDetailFrame;
+	import org.avManager.view.loading.Loading;
 	import org.avManager.view.video.VideoDetailFrame;
 	import org.libra.flex.utils.PopUpUtil;
 
@@ -20,6 +21,8 @@ package org.avManager.view
 		private var _videoDetailFrame:VideoDetailFrame
 		
 		private var _actressDetailFrame:ActressDetailFrame;
+		
+		private var _loading:Loading;
 		
 		public function UIManager(t:T)
 		{
@@ -46,6 +49,18 @@ package org.avManager.view
 			if(!_actressDetailFrame) _actressDetailFrame = new ActressDetailFrame();
 			PopUpUtil.instance.addPopUp(this._actressDetailFrame, this._uiRoot, true, 1);
 			_actressDetailFrame.actressData = actressData;
+		}
+		
+		public function showLoading():void{
+			if(!_loading) _loading = new Loading();
+			PopUpUtil.instance.addPopUp(this._loading, this._uiRoot, true, 1);
+			_loading.autoProgress();
+		}
+		
+		public function closeLoading():void{
+			if(_loading){
+				_loading.close();
+			}
 		}
 		
 		public static function get instance():UIManager{

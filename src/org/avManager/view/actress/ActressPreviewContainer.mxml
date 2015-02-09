@@ -16,6 +16,8 @@
 			import org.avManager.view.UIManager;
 			import org.libra.log4a.Logger;
 			
+			import spark.events.IndexChangeEvent;
+			
 			private static const TOTAL_NUM:int = 60;
 			
 			private static const GAP_X:int = 102;
@@ -28,7 +30,7 @@
 			[Bindable]
 			private var _totalPage:int = 0;
 			
-			private var _curHtmlPage:int = 61;
+			private var _curHtmlPage:int = 401;
 			
 			private var _actressList:Array;
 			
@@ -43,7 +45,7 @@
 			private var _actressDataList:Vector.<ActressData>;
 			
 			[Bindable]
-			private var _cupData:ArrayCollection = new ArrayCollection(["A", "B", "C"]);
+			private var _cupData:ArrayCollection = new ArrayCollection(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "ALL"]);
 			
 			public function updateActressList(list:Vector.<ActressData>):void{
 				this._actressDataList = list;
@@ -118,7 +120,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 80){
+					if(++_curHtmlPage <= 614){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");
@@ -133,7 +135,9 @@
 				
 				var data:String = urlLoader.data;
 				data = data.match(/<div id="waterfall">\s*.*<\/div><\/div>/)[0];
-				_actressData.setPortraitURL(data.match(/http:.*jpg/)[0]);
+				var a:Array = data.match(/http:.*jpg/);
+				if(a && a.length > 0)
+					_actressData.setPortraitURL(a[0]);
 				var ary:Array = data.match(/<p>.*<\/p>/)[0].replace(/<\/?p>/g, ",").toString().split(",");
 				var l:int = ary.length;
 				for(var i:int = 0;i < l;i++){
@@ -142,7 +146,7 @@
 						if(data.indexOf("作品") > -1){
 //							_spiderActressData.worksCount = int(data.match(/\d+/)[0]);
 						}else if(data.indexOf("生日") > -1){
-							var a:Array = data.match(/\d{4}-\d{2}-\d{2}/)[0].split("-");
+							a = data.match(/\d{4}-\d{2}-\d{2}/)[0].split("-");
 							_actressData.birthday = new Date(a[0], a[1], a[2]);
 //							var year:int = int(_spiderActressData.birthday.split("-")[0]);
 //							_spiderActressData.age = _year - year;
@@ -219,6 +223,11 @@
 				UIManager.instance.showActressDetailFrame(cell.actressData);
 			}
 			
+			protected function onCupComboBoxChangeHandler(event:IndexChangeEvent):void
+			{
+				this.updateActressList(ActressManager.instance.getActressByCup(this._cupData.getItemAt(event.newIndex).toString()));
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -227,8 +236,8 @@
 	</fx:Declarations>
 	<s:HGroup width="100%" height="24" horizontalAlign="left">
 		<s:HGroup width="100%" height="24" horizontalAlign="left">
-			<s:Button label="更新" click="onUpdateActressListHandler(event)"/>
-			<s:ComboBox id="_cupComboBox" dataProvider="{_cupData}" labelField="@label"/>
+			<!--<s:Button label="更新" click="onUpdateActressListHandler(event)"/>-->
+			<s:ComboBox id="_cupComboBox" dataProvider="{_cupData}" labelField="@label" change="onCupComboBoxChangeHandler(event)"/>
 		</s:HGroup>
 		<s:HGroup width="100%" height="24" horizontalAlign="right">
 			<s:Button x="1008" width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>

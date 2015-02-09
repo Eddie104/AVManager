@@ -144,6 +144,7 @@ package org.avManager.model.sql
 				}
 			}
 			_updateStatement.text += keyValStr + " where ID = " + sqlData.id;
+			Logger.info("执行更新语句:" + _updateStatement.text);
 			_updateStatement.execute();
 		}
 		

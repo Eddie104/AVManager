@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="40" creationComplete="group1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.libra.flex.utils.PopUpUtil;
+			
+			public static var instance:Loading;
+			
+			private static var progress:Number = .0;
+			
+			private var progressTimer:Timer;
+			
+			private var _showing:Boolean;
+			
+			public function setProgress(val:Number):void{
+				this.progressBar.setProgress(val, 1);
+			}
+			
+			public function setLabel(val:String):void{
+				this.progressBar.label = val;
+			}
+			
+			public function autoProgress():void{
+				if(!progressTimer){
+					progressTimer = new Timer(100);
+					progressTimer.addEventListener(TimerEvent.TIMER, onProgressTimer);
+				}
+				progress = .0;
+				if(!progressTimer.running)
+					progressTimer.start();
+			}
+			
+			protected function onProgressTimer(event:TimerEvent):void
+			{
+				progress += .02;
+				if(progress > 1.0) progress = .0;
+				setProgress(progress);
+			}
+			
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				this.addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			}
+			
+			protected function onAddToStage(event:Event):void
+			{
+				this.removeEventListener(Event.ADDED_TO_STAGE,	onAddToStage);
+				this.addEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromStage);
+			}
+			
+			protected function onRemoveFromStage(event:Event):void
+			{
+				this.addEventListener(Event.ADDED_TO_STAGE,	onAddToStage);
+				this.removeEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromStage);
+				if(this.progressTimer){
+					this.progressTimer.reset();
+				}
+			}
+			
+			public function show(parent:DisplayObject, label:String = ''):void{
+				if(!_showing){
+					_showing = true;
+					PopUpUtil.instance.addPopUp(this, parent, true, 1);	
+				}
+				this.progressBar.label = label;
+			}
+			
+			public function close():void{
+				if(_showing){
+					this._showing = false;
+					PopUpUtil.instance.removePopUp(this, 1);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:ProgressBar id="progressBar" x="0" y="0" width="400"
+					labelPlacement="bottom" mode="manual"/>
+</s:Group>

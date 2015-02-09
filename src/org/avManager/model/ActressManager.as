@@ -102,6 +102,18 @@ package org.avManager.model
 			return null;
 		}
 		
+		public function getActressByCup(cup:String):Vector.<ActressData>{
+			if(cup == "ALL"){
+				return getActressList();
+			}else{
+				var list:Vector.<ActressData> = new Vector.<ActressData>();
+				for each(var actress:ActressData in _actressList){
+					if(actress.cup == cup) list.push(actress);
+				}
+				return list;				
+			}
+		}
+		
 		public function createActress(id:String, name:String):ActressData{
 			var actress:ActressData = this.getActressByActressID(id);
 			if(!actress){
