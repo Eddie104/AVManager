@@ -21,7 +21,7 @@ package org.avManager.model.sql
 		override protected function init():void{
 			super.init();
 			_insertStatement.text = "INSERT INTO " + _tableName + 
-				" (ACTRESS_ID, NAME, BIRTHDAY, HEIGHT, CUP, BUST, WAIST, HIP, PORTRAIT, VIDEO) VALUES (@actressID, @name, @birthday, @height, @cup, @bust, @waist, @hip, @portrait, @video)";
+				" (ACTRESS_ID, NAME, BIRTHDAY, HEIGHT, CUP, BUST, WAIST, HIP, PORTRAIT, VIDEO, ALIAS, SCORE) VALUES (@actressID, @name, @birthday, @height, @cup, @bust, @waist, @hip, @portrait, @video, @alias, @score)";
 			
 			var keyList:Vector.<String> = new Vector.<String>();
 			keyList[0] = "ID INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -35,6 +35,8 @@ package org.avManager.model.sql
 			keyList[8] = "HIP SMALLINT";
 			keyList[9] = "PORTRAIT BLOB";
 			keyList[10] = "VIDEO BLOB";
+			keyList[11] = "ALIAS NVARCHAR";
+			keyList[12] = "SCORE SMALLINT";
 			_createSql = "CREATE TABLE IF NOT EXISTS " + _tableName + " (";
 			const l:int = keyList.length;
 			for(var i:int = 0;i < l;i++){
@@ -58,6 +60,8 @@ package org.avManager.model.sql
 			var b:ByteArray = new ByteArray();
 			b.writeObject(actressData.video);
 			_insertStatement.parameters["@video"] = b;
+			_insertStatement.parameters["@alias"] = actressData.alias;
+			_insertStatement.parameters["@score"] = actressData.score;
 			_insertStatement.execute();
 		}
 		

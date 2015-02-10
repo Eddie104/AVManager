@@ -30,7 +30,7 @@
 			[Bindable]
 			private var _totalPage:int = 0;
 			
-			private var _curHtmlPage:int = 401;
+			private var _curHtmlPage:int = 1;
 			
 			private var _actressList:Array;
 			
@@ -120,7 +120,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 614){
+					if(++_curHtmlPage <= 1){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");
@@ -236,7 +236,7 @@
 	</fx:Declarations>
 	<s:HGroup width="100%" height="24" horizontalAlign="left">
 		<s:HGroup width="100%" height="24" horizontalAlign="left">
-			<!--<s:Button label="更新" click="onUpdateActressListHandler(event)"/>-->
+			<s:Button label="更新" click="onUpdateActressListHandler(event)"/>
 			<s:ComboBox id="_cupComboBox" dataProvider="{_cupData}" labelField="@label" change="onCupComboBoxChangeHandler(event)"/>
 		</s:HGroup>
 		<s:HGroup width="100%" height="24" horizontalAlign="right">

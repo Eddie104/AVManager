@@ -51,6 +51,8 @@ package org.avManager.model
 				if(b){
 					actressData.video = b.readObject();
 				}
+				actressData.alias = data.ALIAS;
+				actressData.score = data.SCORE;
 				this._actressList.addItem(actressData);
 				actressData.needUpdate = false;
 			}

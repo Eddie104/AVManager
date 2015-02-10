@@ -108,6 +108,7 @@ package org.avManager.model.sql
 			var name:String;
 			var metadataXMlList:XMLList;
 			var metadataXMlLength:int = 0;
+			var putIntoParameters:Boolean = false;
 			for(var i:int = 0;i < l;i++){
 				accessorXML = accessorList[i];
 				name = accessorXML.@name;
@@ -116,16 +117,19 @@ package org.avManager.model.sql
 				for(var j:int = 0; j < metadataXMlLength;j++){
 					if(metadataXMlList[j].@name.toString() == "SQLData"){
 						var args:XMLList = metadataXMlList[j].arg;
+						putIntoParameters = false;
 						for each(var arg:XML in args){
 							if(arg.@key.toString() == "type"){
 								switch(arg.@value.toString()){
 									case "BitmapData":
 										_updateStatement.parameters["@" + name] = BitmapBytes.bitmapDataToByteArray(sqlData[name]);
+										putIntoParameters = true;
 										break;
 									case "Array":
 										var b:ByteArray = new ByteArray();
 										b.writeObject(sqlData[name]);
 										_updateStatement.parameters["@" + name] = b;
+										putIntoParameters = true;
 										break;
 								}
 							}else if(arg.@key.toString() == "cloName"){
@@ -136,9 +140,8 @@ package org.avManager.model.sql
 								}
 							}
 						}
-						if(!_updateStatement.parameters["@" + name]){
+						if(!putIntoParameters)
 							_updateStatement.parameters["@" + name] = sqlData[name];
-						}
 						break;
 					}
 				}
@@ -159,6 +162,7 @@ package org.avManager.model.sql
 			}else{
 				_deleteStatement.text = "delete from " + _tableName;
 			}
+			Logger.info("执行删除语句:" + _deleteStatement.text);
 			_deleteStatement.execute(); 
 		}
 		

@@ -159,7 +159,7 @@
 		</s:HGroup>
 		<s:Scroller width="100%" height="100%">
 			<s:Group width="100%" height="100%" id="_container">
-				<s:VGroup width="150" height="320">
+				<s:VGroup width="150" height="320" gap="0" horizontalAlign="center">
 					<s:HGroup width="100%" height="100" horizontalAlign="center">
 						<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
 					</s:HGroup>
@@ -167,27 +167,23 @@
 					<s:HGroup width="100%" height="24">
 						<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-						<s:Label text="身高:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="身高:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.height : '--'}" verticalAlign="middle" width="100%" height="100%"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
-						<s:Label text="生日:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="生日:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? DateUtil.toString(_actressData.birthday) : '--'}" verticalAlign="middle" width="100%" height="100%"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
-						<s:Label text="年龄:" verticalAlign="middle" width="40" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.age : '--'}" verticalAlign="middle" width="100%" height="100%"/>					
-					</s:HGroup>
-					<s:HGroup width="100%" height="24">
-						<s:Label text="罩杯:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="罩杯:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.cup : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-						<s:Label text="胸围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="胸围:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.bust : '--'}" verticalAlign="middle" width="100%" height="100%"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
-						<s:Label text="腰围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="腰围:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.waist : '--'}" verticalAlign="middle" width="100%" height="100%"/>
-						<s:Label text="臀围:" verticalAlign="middle" width="40" height="100%"/>
+						<s:Label text="臀围:" verticalAlign="middle" width="30" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.hip : '--'}" verticalAlign="middle" width="100%" height="100%"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="100%" horizontalAlign="center">

@@ -37,6 +37,10 @@ package org.avManager.model.data
 		
 		private var _video:Array = [];
 		
+		private var _score:int;
+		
+		private var _alias:String;
+		
 		public function ActressData(id:int)
 		{
 			super(id);
@@ -201,6 +205,28 @@ package org.avManager.model.data
 			_video = value;
 			_workCount = _video ? _video.length : 0;
 			this.needUpdate = true;
+		}
+
+		[SQLData(cloName="SCORE")]
+		public function get score():int
+		{
+			return _score;
+		}
+
+		public function set score(value:int):void
+		{
+			_score = value;
+		}
+
+		[SQLData(cloName="ALIAS")]
+		public function get alias():String
+		{
+			return _alias;
+		}
+
+		public function set alias(value:String):void
+		{
+			_alias = value;
 		}
 
 
