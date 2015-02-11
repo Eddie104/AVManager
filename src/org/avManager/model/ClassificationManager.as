@@ -79,14 +79,16 @@ package org.avManager.model
 		}
 		
 		private function onQuery(result:Array):void{
-			const l:int = result.length;
-			var classificationData:ClassificationData;
-			for(var i:int = 0;i < l;i++){
-				classificationData = new ClassificationData(result[i].ID);
-				classificationData.needInsert = false;
-				classificationData.name = result[i].NAME;
-				this._classificationDataList.addItem(classificationData);
-				classificationData.needUpdate = false;
+			if(result){
+				const l:int = result.length;
+				var classificationData:ClassificationData;
+				for(var i:int = 0;i < l;i++){
+					classificationData = new ClassificationData(result[i].ID);
+					classificationData.needInsert = false;
+					classificationData.name = result[i].NAME;
+					this._classificationDataList.addItem(classificationData);
+					classificationData.needUpdate = false;
+				}				
 			}
 			_initCallback();
 		}

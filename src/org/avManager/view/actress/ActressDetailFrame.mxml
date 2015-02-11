@@ -67,6 +67,7 @@
 			override protected function onCreationCompleteHandler(event:FlexEvent):void
 			{
 				super.onCreationCompleteHandler(event);
+				_scoreStepper.textDisplay.enabled = false;
 				
 				_videoCellList = new Vector.<ActressVideoPreviewCell>(TOTAL_NUM);
 				var cell:ActressVideoPreviewCell;
@@ -146,10 +147,23 @@
 				}
 			}
 			
+			protected function onScorechangeHandler(event:Event):void
+			{
+				_actressData.score = _scoreStepper.value;
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:ArrayCollection id="_scoreText">
+			<fx:String>不推荐</fx:String>
+			<fx:String>一般般</fx:String>
+			<fx:String>少数作品不错</fx:String>
+			<fx:String>多数作品不错</fx:String>
+			<fx:String>重点推荐</fx:String>
+			<fx:String>女神</fx:String>
+		</s:ArrayCollection>
 	</fx:Declarations>
 	<s:VGroup width="100%" height="100%">
 		<s:HGroup width="100%" height="24" horizontalAlign="right">
@@ -164,11 +178,12 @@
 						<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
 					</s:HGroup>
 					<s:Label text="{_actressData ? _actressData.name : '--'}" textAlign="center" verticalAlign="middle" width="100%" height="24"/>
+					<s:TextInput text="@{ _actressData.alias}" textAlign="center" width="100%" height="24"/>
 					<s:HGroup width="100%" height="24">
 						<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
 						<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
 						<s:Label text="身高:" verticalAlign="middle" width="30" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.height : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:TextInput text="@{_actressData.height}" width="100%" height="100%" textAlign="center"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
 						<s:Label text="生日:" verticalAlign="middle" width="30" height="100%"/>
@@ -176,15 +191,20 @@
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
 						<s:Label text="罩杯:" verticalAlign="middle" width="30" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.cup : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:TextInput text="@{_actressData.cup}" width="100%" height="100%" textAlign="center"/>
 						<s:Label text="胸围:" verticalAlign="middle" width="30" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.bust : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:TextInput text="@{_actressData.bust}" width="100%" height="100%" textAlign="center"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="24">
 						<s:Label text="腰围:" verticalAlign="middle" width="30" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.waist : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:TextInput text="@{_actressData.waist}" width="100%" height="100%" textAlign="center"/>
 						<s:Label text="臀围:" verticalAlign="middle" width="30" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.hip : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:TextInput text="@{_actressData.hip}" width="100%" height="100%" textAlign="center"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="24">
+						<s:Label text="评分:" verticalAlign="middle" width="30" height="100%"/>
+						<s:NumericStepper id="_scoreStepper" width="36" height="100%" value="{_actressData ? _actressData.score : 1}" change="onScorechangeHandler(event)" maximum="6" minimum="1"/>
+						<s:Label text="{_scoreText.getItemAt(_scoreStepper.value - 1)}" width="100%" height="100%" textAlign="center" verticalAlign="middle"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="100%" horizontalAlign="center">
 						<s:Button label="更新作品" click="onUpdateWorkHandler(event)"/>

@@ -129,7 +129,7 @@
 								s += s ? " " + aa[0] : aa[0];
 							}
 						}
-						this._videoData.torrent = s;	
+						this._videoData.torrent = s;
 					}
 					
 					function getContentFromHtml(tag:String, html:String):String{

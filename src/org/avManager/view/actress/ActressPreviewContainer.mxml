@@ -17,6 +17,7 @@
 			import org.libra.log4a.Logger;
 			
 			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
 			
 			private static const TOTAL_NUM:int = 60;
 			
@@ -46,6 +47,9 @@
 			
 			[Bindable]
 			private var _cupData:ArrayCollection = new ArrayCollection(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "ALL"]);
+			
+			[Bindable]
+			private var _sortData:ArrayCollection = new ArrayCollection(["评分", "默认"]);
 			
 			public function updateActressList(list:Vector.<ActressData>):void{
 				this._actressDataList = list;
@@ -120,7 +124,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 1){
+					if(++_curHtmlPage <= 3){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");
@@ -153,15 +157,15 @@
 						}else if(data.indexOf("星座") > -1){
 //							_spiderActressData.constellation = data.split(": ")[1];
 						}else if(data.indexOf("身高") > -1){
-							_actressData.height = int(data.match(/\d+/)[0]);
+							_actressData.height = data.match(/\d+/)[0];
 						}else if(data.indexOf("罩杯") > -1){
 							_actressData.cup = data.match(/\w+/)[0];
 						}else if(data.indexOf("胸围") > -1){
-							_actressData.bust = int(data.match(/\d+/)[0]);
+							_actressData.bust = data.match(/\d+/)[0];
 						}else if(data.indexOf("腰围") > -1){
-							_actressData.waist = int(data.match(/\d+/)[0]);
+							_actressData.waist = data.match(/\d+/)[0];
 						}else if(data.indexOf("臀围") > -1){
-							_actressData.hip = int(data.match(/\d+/)[0]);
+							_actressData.hip = data.match(/\d+/)[0];
 						}
 					}
 				}
@@ -174,6 +178,7 @@
 			{
 				_cupComboBox.textInput.editable = false;
 				_cupComboBox.textInput.text = "罩杯";
+				_cupComboBox.selectedIndex = _cupData.length - 1;
 					
 				this.addEventListener(Event.RESIZE, onResize);
 				
@@ -223,9 +228,16 @@
 				UIManager.instance.showActressDetailFrame(cell.actressData);
 			}
 			
-			protected function onCupComboBoxChangeHandler(event:IndexChangeEvent):void
-			{
-				this.updateActressList(ActressManager.instance.getActressByCup(this._cupData.getItemAt(event.newIndex).toString()));
+			private function filter(event:Event = null):void{
+				var list:Vector.<ActressData> = ActressManager.instance.filter(_keyNameInput.text, _cupData.getItemAt(_cupComboBox.selectedIndex).toString());
+				if(_sortComboBox.selectedIndex == 0){
+					list.sort(function(a:ActressData, b:ActressData):int{
+						if(a.score < b.score) return 1;
+						if(a.score > b.score) return -1;
+						return 0;
+					});
+				}
+				this.updateActressList(list);
 			}
 			
 		]]>
@@ -237,12 +249,15 @@
 	<s:HGroup width="100%" height="24" horizontalAlign="left">
 		<s:HGroup width="100%" height="24" horizontalAlign="left">
 			<s:Button label="更新" click="onUpdateActressListHandler(event)"/>
-			<s:ComboBox id="_cupComboBox" dataProvider="{_cupData}" labelField="@label" change="onCupComboBoxChangeHandler(event)"/>
+			<s:Label height="100%" text="关键字搜索:" verticalAlign="middle"/>
+			<s:TextInput id="_keyNameInput" prompt="演员姓名关键字" change="filter(event)"/>
+			<s:Label height="100%" text="罩杯:" verticalAlign="middle"/>
+			<s:ComboBox id="_cupComboBox" width="56" change="filter(event)" dataProvider="{_cupData}" labelField="@label"/>
 		</s:HGroup>
 		<s:HGroup width="100%" height="24" horizontalAlign="right">
-			<s:Button x="1008" width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>
-			<s:Label x="1114" width="48" height="100%" text="{_curPage + '/' + _totalPage}" textAlign="center"
-					 verticalAlign="middle"/>
+			<s:ComboBox id="_sortComboBox" width="56" dataProvider="{_sortData}" labelField="@label" change="filter(event)"/>
+			<s:Button width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>
+			<s:Label width="48" height="100%" text="{_curPage + '/' + _totalPage}" textAlign="center" verticalAlign="middle"/>
 			<s:Button label="下一页" width="70" height="100%" click="onNextPageHandler(event)"/>
 		</s:HGroup>
 	</s:HGroup>

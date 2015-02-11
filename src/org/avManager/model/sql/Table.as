@@ -174,10 +174,9 @@ package org.avManager.model.sql
 		}
 		
 		protected function onQueryHandler(evt:SQLEvent):void{
-			var result:SQLResult = this._queryStatement.getResult();
-			if (result.data != null)
-			{
-				if(_queryCallBack != null) _queryCallBack(result.data);
+			if(_queryCallBack != null) _queryCallBack(this._queryStatement.getResult().data);
+//			if (result.data != null)
+//			{
 //				var numResults:int = result.data.length;
 //				
 //				for (var i:int = 0; i < numResults; i++) 
@@ -193,7 +192,7 @@ package org.avManager.model.sql
 //					//					var bmd:BitmapData = BitmapBytes.byteArrayToBitmapData(row.PORTRAIT);
 //					//					trace(bmd);
 //				} 
-			}
+//			}
 		}
 		
 		protected function onUpdateHandler(evt:SQLEvent):void{

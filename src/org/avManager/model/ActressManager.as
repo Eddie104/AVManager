@@ -31,30 +31,32 @@ package org.avManager.model
 		}
 		
 		private function onQuery(result:Array):void{
-			const l:int = result.length;
-			var actressData:ActressData;
-			var data:Object;
-			for(var i:int = 0;i < l;i++){
-				data = result[i];
-				actressData = new ActressData(data.ID);
-				actressData.needInsert = false;
-				actressData.name = data.NAME;
-				actressData.actressID = data.ACTRESS_ID;
-				actressData.birthday = data.BIRTHDAY;
-				actressData.bust = data.BUST;
-				actressData.cup = data.CUP;
-				actressData.height = data.HEIGHT;
-				actressData.hip = data.HIP;
-				actressData.portrait = BitmapBytes.byteArrayToBitmapData(data.PORTRAIT);
-				actressData.waist = data.WAIST;
-				var b:ByteArray = data.VIDEO;
-				if(b){
-					actressData.video = b.readObject();
+			if(result){
+				const l:int = result.length;
+				var actressData:ActressData;
+				var data:Object;
+				for(var i:int = 0;i < l;i++){
+					data = result[i];
+					actressData = new ActressData(data.ID);
+					actressData.needInsert = false;
+					actressData.name = data.NAME;
+					actressData.actressID = data.ACTRESS_ID;
+					actressData.birthday = data.BIRTHDAY;
+					actressData.bust = data.BUST;
+					actressData.cup = data.CUP;
+					actressData.height = data.HEIGHT;
+					actressData.hip = data.HIP;
+					actressData.portrait = BitmapBytes.byteArrayToBitmapData(data.PORTRAIT);
+					actressData.waist = data.WAIST;
+					var b:ByteArray = data.VIDEO;
+					if(b){
+						actressData.video = b.readObject();
+					}
+					actressData.alias = data.ALIAS;
+					actressData.score = data.SCORE;
+					this._actressList.addItem(actressData);
+					actressData.needUpdate = false;
 				}
-				actressData.alias = data.ALIAS;
-				actressData.score = data.SCORE;
-				this._actressList.addItem(actressData);
-				actressData.needUpdate = false;
 			}
 			_initCallback();
 		}
@@ -92,7 +94,7 @@ package org.avManager.model
 		
 		public function getActressByName(name:String):ActressData{
 			for each(var actress:ActressData in _actressList){
-				if(actress.name == name) return actress;
+				if(actress.name == name || (actress.alias && actress.alias.indexOf(name) != -1)) return actress;
 			}
 			return null;	
 		}
@@ -104,16 +106,16 @@ package org.avManager.model
 			return null;
 		}
 		
-		public function getActressByCup(cup:String):Vector.<ActressData>{
-			if(cup == "ALL"){
-				return getActressList();
-			}else{
-				var list:Vector.<ActressData> = new Vector.<ActressData>();
-				for each(var actress:ActressData in _actressList){
-					if(actress.cup == cup) list.push(actress);
+		public function filter(keyName:String, cup:String):Vector.<ActressData>{
+			var list:Vector.<ActressData> = new Vector.<ActressData>();
+			for each(var actress:ActressData in _actressList){
+				if(actress.name.indexOf(keyName) != -1 || (actress.alias && actress.alias.indexOf(keyName) != -1)){
+					if(cup == "ALL" || actress.cup == cup){
+						list.push(actress);						
+					}
 				}
-				return list;				
 			}
+			return list;
 		}
 		
 		public function createActress(id:String, name:String):ActressData{

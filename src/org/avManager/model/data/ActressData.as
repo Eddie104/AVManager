@@ -32,12 +32,11 @@ package org.avManager.model.data
 		
 		private var _age:int;
 		
-		[Bindable]
 		private var _workCount:int;
 		
 		private var _video:Array = [];
 		
-		private var _score:int;
+		private var _score:int = 1;
 		
 		private var _alias:String;
 		
@@ -86,6 +85,7 @@ package org.avManager.model.data
 			return _actressID;
 		}
 
+		[Bindable]
 		public function set actressID(value:String):void
 		{
 			_actressID = value;
@@ -107,15 +107,15 @@ package org.avManager.model.data
 		}
 
 		[SQLData(cloName="HEIGHT")]
-		public function get height():int
+		public function get height():String
 		{
-			return _height;
+			return _height.toString();
 		}
 
 		[Bindable]
-		public function set height(value:int):void
+		public function set height(value:String):void
 		{
-			_height = value;
+			_height = int(value);
 			this.needUpdate = true;
 		}
 
@@ -133,41 +133,41 @@ package org.avManager.model.data
 		}
 
 		[SQLData(cloName="BUST")]
-		public function get bust():int
+		public function get bust():String
 		{
-			return _bust;
+			return _bust.toString();
 		}
 
 		[Bindable]
-		public function set bust(value:int):void
+		public function set bust(value:String):void
 		{
-			_bust = value;
+			_bust = int(value);
 			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="WAIST")]
-		public function get waist():int
+		public function get waist():String
 		{
-			return _waist;
+			return _waist.toString();
 		}
 
 		[Bindable]
-		public function set waist(value:int):void
+		public function set waist(value:String):void
 		{
-			_waist = value;
+			_waist = int(value);
 			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="HIP")]
-		public function get hip():int
+		public function get hip():String
 		{
-			return _hip;
+			return _hip.toString();
 		}
 
 		[Bindable]
-		public function set hip(value:int):void
+		public function set hip(value:String):void
 		{
-			_hip = value;
+			_hip = int(value);
 			this.needUpdate = true;
 		}
 
@@ -193,6 +193,11 @@ package org.avManager.model.data
 		{
 			return _workCount;
 		}
+		
+		[Bindable]
+		public function set workCount(value:int):void{
+			this._waist = value;
+		}
 
 		[SQLData(cloName="VIDEO",type="Array")]
 		public function get video():Array
@@ -200,6 +205,7 @@ package org.avManager.model.data
 			return _video;
 		}
 
+		[Bindable]
 		public function set video(value:Array):void
 		{
 			_video = value;
@@ -213,9 +219,11 @@ package org.avManager.model.data
 			return _score;
 		}
 
+		[Bindable]
 		public function set score(value:int):void
 		{
 			_score = value;
+			this.needUpdate = true;
 		}
 
 		[SQLData(cloName="ALIAS")]
@@ -224,11 +232,12 @@ package org.avManager.model.data
 			return _alias;
 		}
 
+		[Bindable]
 		public function set alias(value:String):void
 		{
 			_alias = value;
+			this.needUpdate = true;
 		}
-
 
 	}
 }

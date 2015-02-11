@@ -31,24 +31,26 @@ package org.avManager.model
 		}
 		
 		private function onQuery(result:Array):void{
-			const l:int = result.length;
-			var videoData:VideoData;
-			var data:Object;
-			for(var i:int = 0;i < l;i++){
-				data = result[i];
-				videoData = new VideoData(data.ID);
-				videoData.needInsert = false;
-				videoData.name = data.NAME;
-				var b:ByteArray = data.CLASSIFICATION as ByteArray;
-				videoData.classification = b.readObject() as Array;
-				videoData.cover = BitmapBytes.byteArrayToBitmapData(data.COVER);
-				videoData.coverSub = BitmapBytes.byteArrayToBitmapData(data.COVER_SUB);
-				videoData.date = data.DATE;
-				videoData.videoID = data.VIDEO_ID;
-				videoData.torrent = data.TORRENT;
-				videoData.actress = data.ACTRESS;
-				this._videoDataList.addItem(videoData);
-				videoData.needUpdate = false;
+			if(result){
+				const l:int = result.length;
+				var videoData:VideoData;
+				var data:Object;
+				for(var i:int = 0;i < l;i++){
+					data = result[i];
+					videoData = new VideoData(data.ID);
+					videoData.needInsert = false;
+					videoData.name = data.NAME;
+					var b:ByteArray = data.CLASSIFICATION as ByteArray;
+					videoData.classification = b.readObject() as Array;
+					videoData.cover = BitmapBytes.byteArrayToBitmapData(data.COVER);
+					videoData.coverSub = BitmapBytes.byteArrayToBitmapData(data.COVER_SUB);
+					videoData.date = data.DATE;
+					videoData.videoID = data.VIDEO_ID;
+					videoData.torrent = data.TORRENT;
+					videoData.actress = data.ACTRESS;
+					this._videoDataList.addItem(videoData);
+					videoData.needUpdate = false;
+				}				
 			}
 			_initCallback();
 		}
@@ -77,9 +79,15 @@ package org.avManager.model
 		}
 		
 		public function getVideoDataByVideoID(videoID:String):VideoData{
-			videoID = videoID.toLowerCase();
+			var a:Array = videoID.toLowerCase().split("-");
+			var n:int = int(a[1]);
+			var b:Array;
 			for each(var videoData:VideoData in this._videoDataList){
-				if(videoData.videoID.toLowerCase() == videoID) return videoData;
+				//if(videoData.videoID.toLowerCase() == videoID) return videoData;
+				b = videoData.videoID.toLowerCase().split("-");
+				if(a[0] == b[0] && int(b[1]) == n){
+					return videoData;
+				}
 			}
 			return null;
 		}

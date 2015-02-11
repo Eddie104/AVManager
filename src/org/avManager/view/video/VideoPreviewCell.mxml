@@ -25,16 +25,16 @@
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
 	<s:HGroup horizontalAlign="center" width="100%" height="200">
-		<s:Image width="100%" height="100%" source="{_videoData ? _videoData.coverSub : null}"/>
+		<s:Image width="100%" height="100%" source="{_videoData.coverSub}"/>
 	</s:HGroup>
-	<s:Label id="_videoIDLabel" width="100%" height="24" text="{_videoData ? _videoData.videoID : '--'}" textAlign="center" verticalAlign="middle"/>
-	<s:Label width="100%" height="24" text="{_videoData ? _videoData.name : '--'}" textAlign="center" verticalAlign="middle"/>
+	<s:Label id="_videoIDLabel" width="100%" height="24" text="{_videoData.videoID}" textAlign="center" verticalAlign="middle"/>
+	<s:Label width="100%" height="24" text="{_videoData.name}" textAlign="center" verticalAlign="middle"/>
 	<s:HGroup width="100%" height="24" paddingLeft="6" paddingRight="6" verticalAlign="middle">
 		<s:Label width="30" height="100%" text="年份:" verticalAlign="middle"/>
-		<s:Label width="100%" height="100%" text="{_videoData ? DateUtil.toString(_videoData.date) : '--'}" verticalAlign="middle" id="_date"/>
+		<s:Label width="100%" height="100%" text="{DateUtil.toString(_videoData.date)}" verticalAlign="middle" id="_date"/>
 	</s:HGroup>
 	<s:HGroup width="100%" height="48" paddingLeft="6" paddingRight="6" verticalAlign="middle">
 		<s:Label width="30" height="100%" text="类型:" verticalAlign="middle"/>
-		<s:Label width="100%" height="100%" text="{_videoData ? _videoData.getClassificationStr() : '--'}" verticalAlign="middle" id="_genres"/>
+		<s:Label width="100%" height="100%" text="{_videoData.getClassificationStr()}" verticalAlign="middle" id="_genres"/>
 	</s:HGroup>
 </s:VGroup>
