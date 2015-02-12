@@ -16,9 +16,6 @@
 			import org.avManager.view.UIManager;
 			import org.libra.log4a.Logger;
 			
-			import spark.events.IndexChangeEvent;
-			import spark.events.TextOperationEvent;
-			
 			private static const TOTAL_NUM:int = 60;
 			
 			private static const GAP_X:int = 102;

@@ -51,10 +51,10 @@ package org.avManager.view
 			_actressDetailFrame.actressData = actressData;
 		}
 		
-		public function showLoading():void{
+		public function showLoading(autoProgress:Boolean = false, label:String = ''):void{
 			if(!_loading) _loading = new Loading();
-			PopUpUtil.instance.addPopUp(this._loading, this._uiRoot, true, 1);
-			_loading.autoProgress();
+			_loading.show(this._uiRoot, label);
+//			_loading.autoProgress();
 		}
 		
 		public function closeLoading():void{

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" creationComplete="onCreationCompleteHandler(event)">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" creationComplete="onCreationCompleteHandler(event)" xmlns:classification="org.avManager.view.classification.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
 			
+			import org.avManager.events.VideoClassificationEvent;
 			import org.avManager.model.data.VideoData;
 			
 			private const TOTAL_NUM:int = 36;
@@ -35,6 +36,7 @@
 			private function onCreationCompleteHandler(event:FlexEvent):void
 			{
 				this.addEventListener(Event.RESIZE, onResize);
+				 _classification.addEventListener(VideoClassificationEvent.SELECTED, onVideoClassificationSelected);
 				
 				_videoCellList = new Vector.<VideoPreviewCell>(TOTAL_NUM);
 				var cell:VideoPreviewCell;
@@ -44,6 +46,11 @@
 					this._container.addElement(cell);
 				}
 				onResize(null);
+			}
+			
+			private function onVideoClassificationSelected(event:VideoClassificationEvent):void
+			{
+				this.dispatchEvent(new VideoClassificationEvent(event.type, event.classificationName));
 			}
 			
 			private function onResize(event:ResizeEvent):void
@@ -96,13 +103,16 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:HGroup width="100%" height="24" horizontalAlign="right">
-		<s:Button x="1008" width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>
-		<s:Label x="1114" width="48" height="100%" text="{_curPage + '/' + _totalPage}" textAlign="center"
-				 verticalAlign="middle"/>
-		<s:Button label="下一页" width="70" height="100%" click="onNextPageHandler(event)"/>
-	</s:HGroup>
-	<s:Scroller width="100%" height="100%">
-		<s:Group width="100%" height="100%" id="_container"/>
-	</s:Scroller>
-</s:VGroup>
+	<classification:Classification width="200" height="100%" id="_classification"/>
+	<s:VGroup width="100%" height="100%">
+		<s:HGroup width="100%" height="24" horizontalAlign="right">
+			<s:Button x="1008" width="70" height="100%" label="上一页" click="onPrevPageHandler(event)"/>
+			<s:Label x="1114" width="48" height="100%" text="{_curPage + '/' + _totalPage}" textAlign="center"
+					 verticalAlign="middle"/>
+			<s:Button label="下一页" width="70" height="100%" click="onNextPageHandler(event)"/>
+		</s:HGroup>
+		<s:Scroller width="100%" height="100%">
+			<s:Group width="100%" height="100%" id="_container"/>
+		</s:Scroller>
+	</s:VGroup>
+</s:HGroup>

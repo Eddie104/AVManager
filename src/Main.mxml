@@ -7,6 +7,7 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
 			import mx.events.MenuEvent;
 			
 			import org.avManager.events.ClassificationEvent;
@@ -23,34 +24,38 @@
 				const appXML:XML = NativeApplication.nativeApplication.applicationDescriptor;
 				var ns:Namespace = appXML.namespace();
 				this.title = 'AVManager ' + String(appXML.ns::versionNumber);
+				
+				_videoPreviewContainer.addEventListener(VideoClassificationEvent.SELECTED, onVideoClassificationSelected);
+				
 				// 初始化视图
 				UIManager.instance.init(this);
-				_classification.addEventListener(VideoClassificationEvent.SELECTED, onVideoClassificationSelected);
-				_classification.addEventListener(ClassificationEvent.SWITCH, onClassificationSwitch);
 				
-//				UIManager.instance.showLoading();
+				UIManager.instance.showLoading(false, "开始初始化数据库");
 				// 初始化数据
 				SQLiteManager.instance.init(File.applicationDirectory.resolvePath("av.db"), this.onSqlInited);
 			}
 			
 			private function onSqlInited():void{
 				Logger.info("开始初始化ClassificationManager");
+				UIManager.instance.showLoading(false, "开始初始化ClassificatioManager");
 				ClassificationManager.instance.init(this.initActressManager);
 			}
 			
 			private function initActressManager():void{
 				Logger.info("开始初始化ActressManager");
+				UIManager.instance.showLoading(false, "开始初始化ActressManager");
 				ActressManager.instance.init(this.initVideoManager);
 			}
 			
 			private function initVideoManager():void{
 				Logger.info("开始初始化VideoManager");
+				UIManager.instance.showLoading(false, "开始初始化VideoManager");
 				VideoManager.instance.init(this.inited);
 			}
 			
 			private function inited():void{
 				Logger.info("所有Manager初始化完毕");
-//				UIManager.instance.closeLoading();
+				UIManager.instance.closeLoading();
 			}
 			
 			protected function onCloseHandler(event:Event = null):void
@@ -77,18 +82,17 @@
 			
 			private function doFun(funName:String):void{
 				switch(funName){
-					case "new":
-						//						onShowVideoDetailFrame(null);
+					case "newVideo":
 						UIManager.instance.showVideoDetailFrame(null, null);
 						break;
+					case "newActress":
+						UIManager.instance.showActressDetailFrame();
+						break;
 					case "open":
-						//						this.openTorrentDir();
 						break;
 					case "spiderAll":
-						//						VideoManager.instance.spiderAll();
 						break;
 					case "actressLib":
-						//						onShowActressFrame();
 						break;
 					case "about":
 						UIManager.instance.showAbout();
@@ -100,30 +104,23 @@
 				}
 			}
 			
-			protected function onVideoClassificationSelected(event:VideoClassificationEvent):void
+			private function onVideoClassificationSelected(event:VideoClassificationEvent):void
 			{
 				this._videoPreviewContainer.updateVideoList(VideoManager.instance.getVideoDataListByClassification(event ? event.classificationName : null));
 			}
 			
-			protected function onClassificationSwitch(event:ClassificationEvent):void
+			private function onTabnavigatorChangeHandler(event:IndexChangedEvent):void
 			{
-				if(event.curIndex == 0){
-					_videoPreviewContainer.visible = true;
-					_actressPreviewContainer.visible = false;
-				}else if(event.curIndex == 1){
-					_videoPreviewContainer.visible = false;
-					_actressPreviewContainer.visible = true;
-					_actressPreviewContainer.updateActressList(ActressManager.instance.getActressList());
-				}
-			}
+				this.dispatchEvent(new ClassificationEvent(ClassificationEvent.SWITCH, event.newIndex));				
+			} 
 			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<fx:XMLList id="menuData">
 			<node label="文件">
-				<node label="新建" type="new"/>
-				<node label="导入" type="open"/>
+				<node label="新建影片" type="newVideo"/>
+				<node label="新建演员" type="newActress"/>
 				<node type="separator"/>
 				<node label="退出" type="exit"/>
 			</node>
@@ -143,11 +140,14 @@
 		<mx:MenuBar width="100%" height="30" change="onMenuBarClicked(event)"
 					dataProvider="{menuData}" labelField="@label"/>
 		<s:HGroup width="100%" height="100%">
-			<classification:Classification width="200" height="100%" id="_classification"/>
-			<s:Group width="100%" height="100%">
-				<video:VideoPreviewContainer width="100%" height="100%" id="_videoPreviewContainer"/>
-				<actress:ActressPreviewContainer width="100%" height="100%" id="_actressPreviewContainer" visible="false"/>
-			</s:Group>
+			<mx:TabNavigator width="100%" height="100%" change="onTabnavigatorChangeHandler(event)">
+				<s:NavigatorContent width="100%" height="100%" label="影片分类">
+					<video:VideoPreviewContainer width="100%" height="100%" id="_videoPreviewContainer"/>
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="100%" label="女优名鉴">
+					<actress:ActressPreviewContainer width="100%" height="100%" id="_actressPreviewContainer"/>					
+				</s:NavigatorContent>
+			</mx:TabNavigator>
 		</s:HGroup>
 	</s:VGroup>
 </s:WindowedApplication>

@@ -39,8 +39,12 @@
 				_actressData = value;
 				_curHtmlPage = 1;
 				_curPage = 1;
-				_totalPage = Math.ceil(this._actressData.video.length / TOTAL_NUM);
-				this.updatePage();
+				if(_actressData){
+					_totalPage = Math.ceil(this._actressData.video.length / TOTAL_NUM);
+					this.updatePage();
+				}else{
+					_totalPage = 1;
+				}
 			}
 			
 			private function updatePage():void{
@@ -101,9 +105,13 @@
 			}
 			
 			private function loadHtml():void{
-				var urlLoader:URLLoader = new URLLoader();
-				urlLoader.addEventListener(Event.COMPLETE, onLoaded);
-				urlLoader.load(new URLRequest("http://www.avdb.im/star/" + _actressData.actressID + "/currentPage/" + _curHtmlPage));
+				if(_actressData){
+					var urlLoader:URLLoader = new URLLoader();
+					urlLoader.addEventListener(Event.COMPLETE, onLoaded);
+					urlLoader.load(new URLRequest("http://www.avdb.im/star/" + _actressData.actressID + "/currentPage/" + _curHtmlPage));					
+				}else{
+					Logger.warn("_actressData为null");
+				}
 			}
 			
 			protected function onLoaded(event:Event):void
@@ -175,13 +183,13 @@
 			<s:Group width="100%" height="100%" id="_container">
 				<s:VGroup width="150" height="320" gap="0" horizontalAlign="center">
 					<s:HGroup width="100%" height="100" horizontalAlign="center">
-						<s:Image source="{_actressData ? _actressData.portrait : null}" width="100" height="100"/>					
+						<s:Image source="{_actressData.portrait}" width="100" height="100"/>					
 					</s:HGroup>
-					<s:Label text="{_actressData ? _actressData.name : '--'}" textAlign="center" verticalAlign="middle" width="100%" height="24"/>
-					<s:TextInput text="@{ _actressData.alias}" textAlign="center" width="100%" height="24"/>
+					<s:TextInput text="@{_actressData.name}" textAlign="center" width="100%" height="24"/>
+					<s:TextInput text="@{_actressData.alias}" textAlign="center" width="100%" height="24"/>
 					<s:HGroup width="100%" height="24">
 						<s:Label text="作品数:" verticalAlign="middle" width="40" height="100%"/>
-						<s:Label text="{_actressData ? _actressData.workCount : '--'}" verticalAlign="middle" width="100%" height="100%"/>
+						<s:Label text="{_actressData.workCount}" verticalAlign="middle" width="100%" height="100%"/>
 						<s:Label text="身高:" verticalAlign="middle" width="30" height="100%"/>
 						<s:TextInput text="@{_actressData.height}" width="100%" height="100%" textAlign="center"/>
 					</s:HGroup>
