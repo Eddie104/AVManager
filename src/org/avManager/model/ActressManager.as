@@ -107,19 +107,24 @@ package org.avManager.model
 		}
 		
 		public function filter(keyName:String, cup:String):Vector.<ActressData>{
+			var allStr:String = 'ALL';
 			var list:Vector.<ActressData> = new Vector.<ActressData>();
-			for each(var actress:ActressData in _actressList){
+			var counter:int = 0;
+			var actress:ActressData;
+			var i:int = _actressList.length;
+			while(--i > -1){
+				actress = _actressList[i];
 				if(actress.name.indexOf(keyName) != -1 || (actress.alias && actress.alias.indexOf(keyName) != -1)){
-					if(cup == "ALL" || actress.cup == cup){
-						list.push(actress);						
+					if(cup == allStr || actress.cup == cup){
+						list[counter++] = actress;
 					}
 				}
 			}
 			return list;
 		}
 		
-		public function createActress(id:String, name:String):ActressData{
-			var actress:ActressData = this.getActressByActressID(id);
+		public function createActress(name:String, id:String = ""):ActressData{
+			var actress:ActressData = id  ? this.getActressByActressID(id) : null;
 			if(!actress){
 				actress = new ActressData(this._actressList.length + 1);
 				actress.needInsert = true;

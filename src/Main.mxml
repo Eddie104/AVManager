@@ -86,7 +86,7 @@
 						UIManager.instance.showVideoDetailFrame(null, null);
 						break;
 					case "newActress":
-						UIManager.instance.showActressDetailFrame();
+						UIManager.instance.showActressCreator();
 						break;
 					case "open":
 						break;

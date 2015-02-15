@@ -5,6 +5,7 @@ package org.avManager.view
 	import org.avManager.model.data.ActressData;
 	import org.avManager.model.data.VideoData;
 	import org.avManager.view.about.About;
+	import org.avManager.view.actress.ActressCreator;
 	import org.avManager.view.actress.ActressDetailFrame;
 	import org.avManager.view.loading.Loading;
 	import org.avManager.view.video.VideoDetailFrame;
@@ -21,6 +22,8 @@ package org.avManager.view
 		private var _videoDetailFrame:VideoDetailFrame
 		
 		private var _actressDetailFrame:ActressDetailFrame;
+		
+		private var _actressCreator:ActressCreator;
 		
 		private var _loading:Loading;
 		
@@ -61,6 +64,11 @@ package org.avManager.view
 			if(_loading){
 				_loading.close();
 			}
+		}
+		
+		public function showActressCreator():void{
+			if(!_actressCreator) _actressCreator = new ActressCreator();
+			PopUpUtil.instance.addPopUp(this._actressCreator, this._uiRoot, true, 1);
 		}
 		
 		public static function get instance():UIManager{

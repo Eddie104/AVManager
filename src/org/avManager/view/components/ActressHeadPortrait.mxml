@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100" height="100" creationComplete="onCreationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import org.libra.utils.bytes.BitmapBytes;
+			
+			private var _fileReference:FileReference;
+			
+			public function get headPortrait():BitmapData{
+				return _img.bitmapData;
+			}
+			
+			protected function onCreationCompleteHandler(event:FlexEvent):void
+			{
+				_toolBar.visible = false;
+				this.addEventListener(MouseEvent.MOUSE_OVER, onMouseEventHandler);
+				this.addEventListener(MouseEvent.MOUSE_OUT, onMouseEventHandler);
+			}
+			
+			protected function onMouseEventHandler(event:MouseEvent):void
+			{
+				if(event.relatedObject != this && !(event.relatedObject is Button)){
+					_toolBar.visible = event.type == MouseEvent.MOUSE_OVER;					
+				}
+			}
+			
+			protected function onUploadImageHandler(event:MouseEvent):void
+			{
+				if(!_fileReference)
+					_fileReference = new FileReference();
+				_fileReference.addEventListener(Event.SELECT, onSelectedHandler);
+				var imageTypes:FileFilter = new FileFilter("头像 (*.jpg)","*.jpg") 
+				_fileReference.browse([imageTypes]);
+			}
+			
+			protected function onSelectedHandler(event:Event):void
+			{
+				_fileReference.removeEventListener(Event.SELECT, onSelectedHandler);
+				
+				_fileReference.addEventListener(Event.COMPLETE, onLoadComplete);
+				_fileReference.load();
+			}
+			
+			protected function onLoadComplete(event:Event):void
+			{
+				_fileReference.removeEventListener(Event.COMPLETE, onLoadComplete);
+				_img.source = _fileReference.data;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Image id="_img" width="100%" height="100%"/>
+	<s:HGroup id="_toolBar" width="100%" height="100%" horizontalAlign="right">
+		<s:Button x="54" width="46" height="24" label="上传" click="onUploadImageHandler(event)"/>
+	</s:HGroup>
+</s:Group>

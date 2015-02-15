@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="180" verticalAlign="middle" xmlns:components="org.avManager.view.components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			import org.avManager.model.ActressManager;
+			import org.avManager.model.data.ActressData;
+			import org.libra.flex.utils.PopUpUtil;
+			
+			private var _actressData:ActressData;
+			
+			protected function onCloseHandler(event:MouseEvent):void
+			{
+				PopUpUtil.instance.removePopUp(this, 1);
+			}
+			
+			protected function onCreateHandler(event:MouseEvent):void
+			{
+				var name:String = this._nameTextInput.text;
+				_actressData = ActressManager.instance.getActressByName(name);
+				if(_actressData){
+					Alert.show("已经存在" + _actressData.name + "的信息,是否继续添加?", "", (Alert.YES | Alert.NO) , this, onAlertClickHandler);
+				}else{
+					add();
+				}
+			}
+			
+			private function onAlertClickHandler(event:CloseEvent):void {  
+				if (event.detail == Alert.YES) add();
+			}
+			
+			private function add():void{
+				_actressData = ActressManager.instance.createActress(this._nameTextInput.text);
+				_actressData.alias = this._aliasTextInput.text;
+				_actressData.birthdayFullYear = this._birthdayFullYearTextInput.text;
+				_actressData.birthdayMonth = this._birthdayMonthTextInput.text;
+				_actressData.birthdayDate = this._birthdayDateTextInput.text;
+				_actressData.height = this._heightTextInput.text;
+				_actressData.cup = this._cupTextInput.text;
+				_actressData.bust = this._bustTextInput.text;
+				_actressData.waist = this._waistTextInput.text;
+				_actressData.hip = this._hipTextInput.text;
+				_actressData.portrait = _actressHeadPortrait.headPortrait;
+				Alert.show('添加成功');
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<components:ActressHeadPortrait id="_actressHeadPortrait" width="100" height="100"/>
+	<s:VGroup width="100%" height="100%" verticalAlign="middle">
+		<s:HGroup width="100%" height="24">
+			<s:Label text="名字:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_nameTextInput" width="100%" height="100%" textAlign="center"/>
+		</s:HGroup>
+		<s:HGroup width="100%" height="24">
+			<s:Label text="别名:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_aliasTextInput" width="100%" height="100%" textAlign="center"/>
+		</s:HGroup>
+		<s:HGroup width="100%" height="24">
+			<s:Label text="生日:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_birthdayFullYearTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+			<s:Label text="-" width="5" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_birthdayMonthTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+			<s:Label text="-" width="5" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_birthdayDateTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+			<s:Label text="身高:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_heightTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+		</s:HGroup>
+		<s:HGroup width="100%" height="24">
+			<s:Label text="罩杯:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_cupTextInput" width="100%" height="100%" textAlign="center" restrict="a-zA-Z"/>
+			<s:Label text="胸围:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_bustTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+			<s:Label text="腰围:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_waistTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+			<s:Label text="臀围:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_hipTextInput" width="100%" height="100%" textAlign="center" restrict="0-9"/>
+		</s:HGroup>
+		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:Button label="创建" click="onCreateHandler(event)"/>
+			<s:Button label="关闭" click="onCloseHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:HGroup>

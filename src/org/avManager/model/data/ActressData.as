@@ -43,7 +43,7 @@ package org.avManager.model.data
 		public function ActressData(id:int)
 		{
 			super(id);
-			this.birthday = Config.instance.defaultDate;
+			this.birthday = new Date(Config.instance.defaultDate.fullYear, Config.instance.defaultDate.month, Config.instance.defaultDate.date);
 		}
 		
 		public function setPortraitURL(url:String):void{
@@ -105,7 +105,46 @@ package org.avManager.model.data
 			_age = Config.instance.now.fullYear - value.fullYear;
 			this.needUpdate = true;
 		}
-
+		
+		public function get birthdayFullYear():String{
+			return _birthday.fullYear.toString();
+		}
+		
+		[Bindable]
+		public function set birthdayFullYear(value:String):void{
+			var year:int = int(value);
+			if(year > 0){
+				this._birthday.fullYear = year;
+				this._needUpdate = true;
+			}
+		}
+		
+		public function get birthdayMonth():String{
+			return (_birthday.month + 1).toString();
+		}
+		
+		[Bindable]
+		public function set birthdayMonth(value:String):void{
+			var month:int = int(value);
+			if(month > 0){
+				this._birthday.month = month - 1;
+				this._needUpdate = true;
+			}
+		}
+		
+		public function get birthdayDate():String{
+			return _birthday.date.toString();
+		}
+		
+		[Bindable]
+		public function set birthdayDate(value:String):void{
+			var date:int = int(value);
+			if(date > 0){
+				this._birthday.date = date;
+				this._needUpdate = true;
+			}
+		}
+		
 		[SQLData(cloName="HEIGHT")]
 		public function get height():String
 		{
@@ -128,7 +167,7 @@ package org.avManager.model.data
 		[Bindable]
 		public function set cup(value:String):void
 		{
-			_cup = value;
+			_cup = value.toLocaleUpperCase();
 			this.needUpdate = true;
 		}
 

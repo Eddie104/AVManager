@@ -101,6 +101,17 @@
 				_actressList = data.match(/<a href="\/star\/\w+"><img.*jpg" title=".*" class="avatar"><\/a>/g);
 				_curActressIndex = 0;
 				getNextActress(_curActressIndex);
+				
+//				if(data.indexOf("今村楓") == -1){
+//					Logger.info(_curHtmlPage + "完成了，开始下一页");
+//					if(++_curHtmlPage <= 3000){
+//						this.onUpdateActressListHandler(null);
+//					}else{
+//						Logger.info("ok le");
+//					}
+//				}else{
+//					trace("_curHtmlPage = " + _curHtmlPage);
+//				}
 			}
 			
 			private function getNextActress(index:int):void{
@@ -108,7 +119,7 @@
 					var actressHtml:String = _actressList[index];
 					var id:String = actressHtml.match(/\/star\/\w+/)[0];
 					var name:String = actressHtml.match(/title=".*" class/)[0].replace("title=\"", "").toString().replace("\" class", "");
-					_actressData = ActressManager.instance.createActress(id.replace("/star/", ""), name);
+					_actressData = ActressManager.instance.createActress(name, id.replace("/star/", ""));
 					if(_actressData.needInsert){
 						// 开始获取每一个演员的数据
 						var urlLoader:URLLoader = new URLLoader();
@@ -121,7 +132,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 3){
+					if(++_curHtmlPage <= 200){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");
