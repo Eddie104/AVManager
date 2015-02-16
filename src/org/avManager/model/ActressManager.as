@@ -54,6 +54,7 @@ package org.avManager.model
 					}
 					actressData.alias = data.ALIAS;
 					actressData.score = data.SCORE;
+					actressData.rank = data.RANK;
 					this._actressList.addItem(actressData);
 					actressData.needUpdate = false;
 				}
@@ -72,7 +73,9 @@ package org.avManager.model
 				if(_saveCallback != null) _saveCallback();
 			}else{
 				var actressData:ActressData = this._actressList.getItemAt(_saveIndex++) as ActressData;
-				if(actressData.needInsert){
+				if(actressData.needDelete){
+					SQLiteManager.instance.actressTable.del(actressData.id, saveActressData);
+				}else if(actressData.needInsert){
 					actressData.needInsert = false;
 					SQLiteManager.instance.actressTable.insert(actressData, saveActressData);
 				}else if(actressData.needUpdate){
@@ -93,7 +96,10 @@ package org.avManager.model
 		}
 		
 		public function getActressByName(name:String):ActressData{
-			for each(var actress:ActressData in _actressList){
+			var i:int = _actressList.length;
+			var actress:ActressData;
+			while(--i > -1){
+				actress = _actressList[i];
 				if(actress.name == name || (actress.alias && actress.alias.indexOf(name) != -1)) return actress;
 			}
 			return null;	
@@ -106,8 +112,14 @@ package org.avManager.model
 			return null;
 		}
 		
-		public function filter(keyName:String, cup:String):Vector.<ActressData>{
+		public function filter(keyName:String, cup:String, height:String):Vector.<ActressData>{
 			var allStr:String = 'ALL';
+			var minHeight:int = 0, maxHeight:int = 0;
+			if(height != allStr){
+				var a:Array = height.split("-");
+				minHeight = int(a[0]);
+				maxHeight = int(a[1]);
+			}
 			var list:Vector.<ActressData> = new Vector.<ActressData>();
 			var counter:int = 0;
 			var actress:ActressData;
@@ -116,7 +128,9 @@ package org.avManager.model
 				actress = _actressList[i];
 				if(actress.name.indexOf(keyName) != -1 || (actress.alias && actress.alias.indexOf(keyName) != -1)){
 					if(cup == allStr || actress.cup == cup){
-						list[counter++] = actress;
+						if(height == allStr || (int(actress.height) >= minHeight && int(actress.height) < maxHeight)){
+							list[counter++] = actress;
+						}
 					}
 				}
 			}

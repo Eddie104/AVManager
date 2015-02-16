@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <components:AVWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					 xmlns:s="library://ns.adobe.com/flex/spark" 
-					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800" xmlns:video="org.avManager.view.video.*">
+					 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.avManager.view.components.*" width="1200" height="800" xmlns:video="org.avManager.view.video.*" xmlns:components1="org.libra.flex.spark.components.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			
+			import org.avManager.events.VideoEvent;
 			import org.avManager.model.ClassificationManager;
 			import org.avManager.model.VideoManager;
 			import org.avManager.model.data.VideoData;
@@ -38,8 +40,6 @@
 						urlLoader.load(new URLRequest("http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=" + _videoID));
 						urlLoader.addEventListener(Event.COMPLETE, onSearchCompleted);
 						urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
-					}else{
-						test.source = _videoData.cover;
 					}
 				}else{
 					Alert.show("请输入正确格式的番号");
@@ -145,6 +145,18 @@
 				}
 			}
 			
+			override protected function onCreationCompleteHandler(event:FlexEvent):void
+			{
+				super.onCreationCompleteHandler(event);
+				_img.addEventListener(FlexEvent.READY, onImgLoaded);
+			}
+			
+			
+			protected function onImgLoaded(event:FlexEvent):void
+			{
+				this.dispatchEvent(new org.avManager.events.VideoEvent(org.avManager.events.VideoEvent.COVER_LOADED, _videoData));
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -153,7 +165,7 @@
 	<s:HGroup width="100%" height="100%">
 		<s:Scroller width="800" height="100%">
 			<s:Group width="100%" height="100%">
-				<s:Image id="test" source="{_videoData ? _videoData.cover : null}"/>
+				<s:Image id="_img" source="{_videoData.cover}"/>
 			</s:Group>
 		</s:Scroller>
 		<s:VGroup width="100%" height="100%">
@@ -164,7 +176,7 @@
 			</s:HGroup>
 			<s:HGroup width="100%" height="24">
 				<s:Label text="影片名:" width="80" height="24" verticalAlign="middle"/>
-				<s:Label text="{_videoData ? _videoData.name : null}" verticalAlign="middle" height="100%"/>
+				<s:Label text="{_videoData.name}" verticalAlign="middle" height="100%"/>
 			</s:HGroup>
 			<s:HGroup width="100%" height="24">
 				<s:Label width="80" height="24" text="发行时间:" verticalAlign="middle"/>
@@ -172,11 +184,10 @@
 			</s:HGroup>
 			<s:HGroup width="100%" height="24">
 				<s:Label width="80" height="100%" text="艺术表演者:" verticalAlign="middle"/>
-				<s:Label width="100%" height="100%" text="{_videoData ? _videoData.actress : '--'}" verticalAlign="middle"/>
+				<s:Label width="100%" height="100%" text="{_videoData.actress}" verticalAlign="middle"/>
 			</s:HGroup>
 			<mx:ToolBar width="100%" height="100%">
-				<mx:Repeater id="_actressContainer" width="100%" height="100%" dataProvider="{_videoData ? _videoData.actressDataList : null}">
-					<!--<video:TorrentContainer torrentUrl="{_actressContainer.currentItem}" width="100%" height="100%"/>-->
+				<mx:Repeater id="_actressContainer" width="100%" height="100%" dataProvider="{_videoData.actressDataList}">
 					<video:ActressContainer actressData="{_actressContainer.currentItem}" width="100" height="124"/>
 				</mx:Repeater>
 			</mx:ToolBar>
@@ -184,7 +195,7 @@
 				<s:Label width="100%" height="100%" text="种子下载:" verticalAlign="middle"/>
 			</s:HGroup>
 			<mx:ToolBar width="100%" height="100%">
-				<mx:Repeater id="_torrentContainer" width="100%" height="100%" dataProvider="{_videoData ? _videoData.torrentList : null}">
+				<mx:Repeater id="_torrentContainer" width="100%" height="100%" dataProvider="{_videoData.torrentList}">
 					<video:TorrentContainer torrentUrl="{_torrentContainer.currentItem}" width="100%" height="100%"/>
 				</mx:Repeater>
 			</mx:ToolBar>

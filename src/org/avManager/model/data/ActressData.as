@@ -40,6 +40,8 @@ package org.avManager.model.data
 		
 		private var _alias:String;
 		
+		private var _rank:int = 0;
+		
 		public function ActressData(id:int)
 		{
 			super(id);
@@ -277,6 +279,29 @@ package org.avManager.model.data
 			_alias = value;
 			this.needUpdate = true;
 		}
+
+		[SQLData(cloName="RANK")]
+		public function get rank():int
+		{
+			return _rank;
+		}
+
+		[Bindable]
+		public function set rank(value:int):void
+		{
+			_rank = value;
+			this.needUpdate = true;
+		}
+		
+		public function get rankStr():String{
+			return this.rank.toString();
+		}
+		
+		[Bindable]
+		public function set rankStr(value:String):void{
+			this.rank = int(value);
+		}
+
 
 	}
 }

@@ -53,31 +53,6 @@ package org.avManager.model.sql
 			b.writeObject(videoData.classification);
 			_insertStatement.parameters["@classification"] = b;
 			_insertStatement.execute();
-		}
-		
-		//==============start test======================================
-//			override protected function onCreateResult(event:SQLEvent):void{
-//				super.onCreateResult(event);
-//				test();
-//			}
-//			
-//			private function test():void{
-////				var t:VideoData = new VideoData();
-////				t.classification = [1, 2, 3];
-////				t.cover = new BitmapData(50,50);
-////				t.coverSub = new BitmapData(60,60);
-////				t.date = new Date();
-////				t.name = "dsfsd";
-////				t.videoID = "tt-023";
-////				this.insert(t, function():void{trace("插入完毕");});
-//				
-////				this.query(function(result:Array):void{
-////					var t:Object = result[0];
-////					var b:ByteArray = t.CLASSIFICATION as ByteArray;
-////					t = b.readObject();
-////					trace(t);
-////				});
-//			}
-		//==============end test======================================		
+		}	
 	}
 }

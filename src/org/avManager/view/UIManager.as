@@ -1,12 +1,15 @@
 package org.avManager.view
 {
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	
+	import org.avManager.events.VideoEvent;
 	import org.avManager.model.data.ActressData;
 	import org.avManager.model.data.VideoData;
 	import org.avManager.view.about.About;
 	import org.avManager.view.actress.ActressCreator;
 	import org.avManager.view.actress.ActressDetailFrame;
+	import org.avManager.view.actress.DMMRankParser;
 	import org.avManager.view.loading.Loading;
 	import org.avManager.view.video.VideoDetailFrame;
 	import org.libra.flex.utils.PopUpUtil;
@@ -27,6 +30,8 @@ package org.avManager.view
 		
 		private var _loading:Loading;
 		
+		private var _dmmRankParser:DMMRankParser;
+		
 		public function UIManager(t:T)
 		{
 			
@@ -42,10 +47,20 @@ package org.avManager.view
 		}
 		
 		public function showVideoDetailFrame(videoID:String, videoData:VideoData):void{
-			if(!_videoDetailFrame) _videoDetailFrame = new VideoDetailFrame();
+			if(!_videoDetailFrame) {
+				_videoDetailFrame = new VideoDetailFrame();
+				_videoDetailFrame.addEventListener(VideoEvent.COVER_LOADED, onCoverLoaded);
+			}
 			PopUpUtil.instance.addPopUp(this._videoDetailFrame, this._uiRoot, true, 1);
 			_videoDetailFrame.videoDataID = videoID;
 			_videoDetailFrame.videoData = videoData;
+		}
+		
+		protected function onCoverLoaded(event:VideoEvent):void
+		{
+			if(_actressDetailFrame){
+				_actressDetailFrame.updateVideoData(event.videoData);
+			}
 		}
 		
 		public function showActressDetailFrame(actressData:ActressData = null):void{
@@ -69,6 +84,19 @@ package org.avManager.view
 		public function showActressCreator():void{
 			if(!_actressCreator) _actressCreator = new ActressCreator();
 			PopUpUtil.instance.addPopUp(this._actressCreator, this._uiRoot, true, 1);
+		}
+		
+		public function showDmmRankParser():void{
+			if(!_dmmRankParser){
+				_dmmRankParser = new DMMRankParser();
+			}
+			PopUpUtil.instance.addPopUp(this._dmmRankParser, this._uiRoot, true, 1);
+		}
+		
+		public function closeDmmRankParser():void{
+			if(_dmmRankParser){
+				PopUpUtil.instance.removePopUp(_dmmRankParser, 1);				
+			}
 		}
 		
 		public static function get instance():UIManager{

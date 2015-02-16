@@ -37,7 +37,9 @@ package org.avManager.model
 				if(_saveCallback != null) _saveCallback();
 			}else{
 				var classificationData:ClassificationData = this._classificationDataList.getItemAt(_saveIndex++) as ClassificationData;
-				if(classificationData.needInsert){
+				if(classificationData.needDelete){
+					SQLiteManager.instance.classificationTable.del(classificationData.id, saveClassificationData);
+				}else if(classificationData.needInsert){
 					classificationData.needInsert = false;
 					SQLiteManager.instance.classificationTable.insert(classificationData, saveClassificationData);
 				}else if(classificationData.needUpdate){

@@ -46,7 +46,10 @@
 			private var _cupData:ArrayCollection = new ArrayCollection(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "ALL"]);
 			
 			[Bindable]
-			private var _sortData:ArrayCollection = new ArrayCollection(["评分", "默认"]);
+			private var _heightData:ArrayCollection = new ArrayCollection(["0-150", "150-160", "160-170", "170-180", "180-200", "ALL"]);
+			
+			[Bindable]
+			private var _sortData:ArrayCollection = new ArrayCollection(["评分", "DMM排名", "默认"]);
 			
 			public function updateActressList(list:Vector.<ActressData>):void{
 				this._actressDataList = list;
@@ -120,7 +123,7 @@
 					var id:String = actressHtml.match(/\/star\/\w+/)[0];
 					var name:String = actressHtml.match(/title=".*" class/)[0].replace("title=\"", "").toString().replace("\" class", "");
 					_actressData = ActressManager.instance.createActress(name, id.replace("/star/", ""));
-					if(_actressData.needInsert){
+					if(_actressData.needInsert || !_actressData.portrait){
 						// 开始获取每一个演员的数据
 						var urlLoader:URLLoader = new URLLoader();
 						urlLoader.load(new URLRequest("http://avdb.im" + id));
@@ -132,7 +135,7 @@
 					}
 				}else{
 					Logger.info(_curHtmlPage + "完成了，开始下一页");
-					if(++_curHtmlPage <= 200){
+					if(++_curHtmlPage <= 660){
 						this.onUpdateActressListHandler(null);
 					}else{
 						Logger.info("ok le");
@@ -185,8 +188,13 @@
 			protected function onCreationCompleteHandler(event:FlexEvent):void
 			{
 				_cupComboBox.textInput.editable = false;
-				_cupComboBox.textInput.text = "罩杯";
 				_cupComboBox.selectedIndex = _cupData.length - 1;
+				
+				_heightComboBox.textInput.enabled = false;
+				_heightComboBox.selectedIndex = _heightData.length - 1;
+				
+				_sortComboBox.textInput.enabled = false;
+				_sortComboBox.selectedIndex = 0;
 					
 				this.addEventListener(Event.RESIZE, onResize);
 				
@@ -237,15 +245,31 @@
 			}
 			
 			private function filter(event:Event = null):void{
-				var list:Vector.<ActressData> = ActressManager.instance.filter(_keyNameInput.text, _cupData.getItemAt(_cupComboBox.selectedIndex).toString());
+				var list:Vector.<ActressData> = ActressManager.instance.filter(_keyNameInput.text, _cupData.getItemAt(_cupComboBox.selectedIndex).toString(), _heightData.getItemAt(_heightComboBox.selectedIndex).toString());
 				if(_sortComboBox.selectedIndex == 0){
 					list.sort(function(a:ActressData, b:ActressData):int{
 						if(a.score < b.score) return 1;
 						if(a.score > b.score) return -1;
 						return 0;
 					});
+				}else if(_sortComboBox.selectedIndex == 1){
+					list.sort(function(a:ActressData, b:ActressData):int{
+						if(a.rank == 0 && b.rank > 0){
+							return 1;
+						}else if(a.rank != 0 && b.rank == 0){
+							return -1;
+						}
+						if(a.rank < b.rank) return -1;
+						if(a.rank > b.rank) return 1;
+						return 0;
+					});
 				}
 				this.updateActressList(list);
+			}
+			
+			protected function onUpdateActressScoreHandler(event:MouseEvent):void
+			{
+				UIManager.instance.showDmmRankParser();
 			}
 			
 		]]>
@@ -257,10 +281,13 @@
 	<s:HGroup width="100%" height="24" horizontalAlign="left">
 		<s:HGroup width="100%" height="24" horizontalAlign="left">
 			<s:Button label="更新" click="onUpdateActressListHandler(event)"/>
+			<s:Button label="更新演员分数" click="onUpdateActressScoreHandler(event)"/>
 			<s:Label height="100%" text="关键字搜索:" verticalAlign="middle"/>
 			<s:TextInput id="_keyNameInput" prompt="演员姓名关键字" change="filter(event)"/>
 			<s:Label height="100%" text="罩杯:" verticalAlign="middle"/>
-			<s:ComboBox id="_cupComboBox" width="56" change="filter(event)" dataProvider="{_cupData}" labelField="@label"/>
+			<s:ComboBox id="_cupComboBox" width="56" change="filter(event)" dataProvider="{_cupData}"/>
+			<s:Label height="100%" text="身高:" verticalAlign="middle"/>
+			<s:ComboBox id="_heightComboBox" width="80" change="filter(event)" dataProvider="{_heightData}"/>
 		</s:HGroup>
 		<s:HGroup width="100%" height="24" horizontalAlign="right">
 			<s:ComboBox id="_sortComboBox" width="56" dataProvider="{_sortData}" labelField="@label" change="filter(event)"/>

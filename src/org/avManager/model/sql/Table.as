@@ -36,6 +36,8 @@ package org.avManager.model.sql
 		
 		protected var _deleteStatement:SQLStatement;
 		
+		protected var _deleteCallback:Function;
+		
 		public function Table(sqlConnection:SQLConnection)
 		{
 			_sqlConnection = sqlConnection;
@@ -151,17 +153,24 @@ package org.avManager.model.sql
 			_updateStatement.execute();
 		}
 		
-		public function del(idList:Vector.<int> = null):void{
-			if(idList){
-				var idListStr:String = "(";
-				for(var i:int = 0;i < idList.length;i++){
-					idListStr += i == 0 ? idList[i] : "," + idList[i];
-				}
-				idListStr += ")";
-				_deleteStatement.text = "delete from " + _tableName + " where ID in " + idListStr;
-			}else{
-				_deleteStatement.text = "delete from " + _tableName;
-			}
+//		public function del(idList:Vector.<int> = null):void{
+//			if(idList){
+//				var idListStr:String = "(";
+//				for(var i:int = 0;i < idList.length;i++){
+//					idListStr += i == 0 ? idList[i] : "," + idList[i];
+//				}
+//				idListStr += ")";
+//				_deleteStatement.text = "delete from " + _tableName + " where ID in " + idListStr;
+//			}else{
+//				_deleteStatement.text = "delete from " + _tableName;
+//			}
+//			Logger.info("执行删除语句:" + _deleteStatement.text);
+//			_deleteStatement.execute(); 
+//		}
+		
+		public function del(id:int, callback:Function):void{
+			_deleteCallback = callback;
+			_deleteStatement.text = "delete from " + _tableName + " where ID = " + id;
 			Logger.info("执行删除语句:" + _deleteStatement.text);
 			_deleteStatement.execute(); 
 		}
@@ -202,6 +211,9 @@ package org.avManager.model.sql
 		protected function onDeleteHandler(evt:SQLEvent):void{
 			var result:SQLResult = this._deleteStatement.getResult();
 			Logger.info("删除行数:" + result.rowsAffected);
+			if(_deleteCallback != null){
+				_deleteCallback();
+			}
 		}
 		
 		protected function onCreateResult(event:SQLEvent):void{

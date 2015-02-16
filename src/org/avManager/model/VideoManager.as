@@ -66,7 +66,9 @@ package org.avManager.model
 				if(_saveCallback != null) _saveCallback();
 			}else{
 				var videoData:VideoData = this._videoDataList.getItemAt(_saveIndex++) as VideoData;
-				if(videoData.needInsert){
+				if(videoData.needDelete){
+					SQLiteManager.instance.videoTable.del(videoData.id, saveVideData);
+				}else if(videoData.needInsert){
 					videoData.needInsert = false;
 					SQLiteManager.instance.videoTable.insert(videoData, saveVideData);
 				}else if(videoData.needUpdate){

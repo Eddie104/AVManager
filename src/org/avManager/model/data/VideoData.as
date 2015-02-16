@@ -193,6 +193,12 @@ package org.avManager.model.data
 		{
 			return _torrentList;
 		}
+		
+		[Bindable]
+		public function set torrentList(value:ArrayCollection):void
+		{
+//			_torrentList = value;
+		}
 
 		[SQLData(cloName="ACTRESS")]
 		public function get actress():String
@@ -229,6 +235,11 @@ package org.avManager.model.data
 			return _actressDataList;
 		}
 
+		[Bindable]
+		public function set actressDataList(value:ArrayCollection):void
+		{
+//			return _actressDataList;
+		}
 
 	}
 }

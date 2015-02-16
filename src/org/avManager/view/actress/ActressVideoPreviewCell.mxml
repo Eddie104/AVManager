@@ -4,6 +4,7 @@
 						xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:video="org.avManager.view.video.*" width="150" height="320">
 	<fx:Script>
 		<![CDATA[
+			import org.avManager.model.data.VideoData;
 			
 			public function set videoID(val:String):void{
 				if(this._videoData && this._videoData.videoID != val){
@@ -15,6 +16,12 @@
 			
 			public function get videoID():String{
 				return _videoIDLabel.text;
+			}
+			
+			public function updateVideoData(videoData:VideoData):void{
+				if(_videoIDLabel.text == videoData.videoID){
+					this.videoData = videoData;
+				}
 			}
 			
 		]]>

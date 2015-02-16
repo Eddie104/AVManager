@@ -11,6 +11,8 @@ package org.avManager.model.data
 		
 		protected var _needUpdate:Boolean;
 		
+		protected var _needDelete:Boolean;
+		
 		public function SQLData(id:int)
 		{
 			_id = id;
@@ -52,6 +54,16 @@ package org.avManager.model.data
 		public function set needUpdate(value:Boolean):void
 		{
 			_needUpdate = value;
+		}
+
+		public function get needDelete():Boolean
+		{
+			return _needDelete;
+		}
+
+		public function set needDelete(value:Boolean):void
+		{
+			_needDelete = value;
 		}
 
 

@@ -36,6 +36,7 @@
 			
 			private function add():void{
 				_actressData = ActressManager.instance.createActress(this._nameTextInput.text);
+				_actressData.actressID = _actressIDTextInput.text;
 				_actressData.alias = this._aliasTextInput.text;
 				_actressData.birthdayFullYear = this._birthdayFullYearTextInput.text;
 				_actressData.birthdayMonth = this._birthdayMonthTextInput.text;
@@ -60,6 +61,8 @@
 		<s:HGroup width="100%" height="24">
 			<s:Label text="名字:" width="30" height="100%" verticalAlign="middle"/>
 			<s:TextInput id="_nameTextInput" width="100%" height="100%" textAlign="center"/>
+			<s:Label text="编号:" width="30" height="100%" verticalAlign="middle"/>
+			<s:TextInput id="_actressIDTextInput" width="100%" height="100%" textAlign="center"/>
 		</s:HGroup>
 		<s:HGroup width="100%" height="24">
 			<s:Label text="别名:" width="30" height="100%" verticalAlign="middle"/>
