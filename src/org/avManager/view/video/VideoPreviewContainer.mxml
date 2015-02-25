@@ -9,6 +9,7 @@
 			
 			import org.avManager.events.VideoClassificationEvent;
 			import org.avManager.model.data.VideoData;
+			import org.avManager.view.UIManager;
 			
 			private const TOTAL_NUM:int = 36;
 			private const GAP_X:int = 152;
@@ -42,6 +43,7 @@
 				var cell:VideoPreviewCell;
 				for(var i:int = 0;i < TOTAL_NUM; i++){
 					cell = new VideoPreviewCell();
+					cell.addEventListener(MouseEvent.CLICK, onVideoCellClicked);
 					_videoCellList[i] = cell;
 					this._container.addElement(cell);
 				}
@@ -96,6 +98,12 @@
 				for(; index < TOTAL_NUM;index++){
 					this._videoCellList[index].videoData = null;
 				}
+			}
+			
+			protected function onVideoCellClicked(event:MouseEvent):void
+			{
+				var cell:VideoPreviewCell = event.currentTarget as VideoPreviewCell;
+				UIManager.instance.showVideoDetailFrame(null, cell.videoData);
 			}
 			
 		]]>

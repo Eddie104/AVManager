@@ -23,6 +23,10 @@
 			
 			public function set videoData(value:VideoData):void
 			{
+				if(value){
+					value.initActress();
+					_videoIDInput.text = value.videoID;
+				}
 				_videoData = value;
 			}
 			
@@ -35,7 +39,7 @@
 				this._videoID = _videoIDInput.text;
 				if(_videoID && _videoID.indexOf("-") != -1){
 					_videoData = VideoManager.instance.createVideoID(_videoID);
-					if(_videoData.needInsert){
+					if(_videoData.needInsert || !_videoData.cover || !_videoData.coverSub){
 						var urlLoader:URLLoader = new URLLoader();
 						urlLoader.load(new URLRequest("http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=" + _videoID));
 						urlLoader.addEventListener(Event.COMPLETE, onSearchCompleted);
@@ -66,8 +70,23 @@
 			private function getDataFromHtml(html:String):void
 			{
 				var a:Array;
-				if(html.match(/<div class="boxtitle">/g).length){
+				if(html.indexOf("搜寻没有结果") != -1){
 					Alert.show("找不到该番号对应的影片信息,番号:" + _videoID);
+				}else if(html.indexOf("识别码搜寻结果") != -1){
+					// 此时可能有多个搜寻结果
+					a = html.match(/<div class="video".*<\/a><\/div><\/div>/g);
+					var ss:String = "<div class=\"id\">" + _videoID + "</div>";
+					for each(var s:String in a){
+						if(s.indexOf(ss) != -1){
+							s = s.split("./?v=")[1].split("\" title")[0];
+							var urlLoader:URLLoader = new URLLoader();
+							urlLoader.load(new URLRequest("http://www.javlibrary.com/cn/?v=" + s));
+							urlLoader.addEventListener(Event.COMPLETE, onSearchCompleted);
+							urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onSearchIOError);
+							return;
+						}
+					}
+					Alert.show("似乎找不到该番号对应的影片信息,番号:" + _videoID);
 				}else{
 					// 获取图片url
 					a = html.match(/<img id="video_jacket_img".*<\/div>/);
@@ -122,7 +141,7 @@
 					a = html.match(/\[url=http:\/\/.*url\]/g);
 					if(a){
 						var aa:Array;
-						var s:String = '';
+						s = '';
 						for(var i:int = 0;i < a.length;i++){
 							aa = a[i].match(/http:\/\/\w*\.*\w+\.\w+\/[\w* .\/?\-%&=]*/);
 							if(aa && aa.length){

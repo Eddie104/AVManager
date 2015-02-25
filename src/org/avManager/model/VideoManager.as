@@ -50,7 +50,7 @@ package org.avManager.model
 					videoData.actress = data.ACTRESS;
 					this._videoDataList.addItem(videoData);
 					videoData.needUpdate = false;
-				}				
+				}
 			}
 			_initCallback();
 		}

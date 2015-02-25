@@ -9,6 +9,7 @@ package org.avManager.model.data
 	import flash.net.URLRequest;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	
 	import org.avManager.model.ActressManager;
 	import org.avManager.model.ClassificationManager;
@@ -29,9 +30,11 @@ package org.avManager.model.data
 		
 		private var _classification:Array = [];
 		
-		private var _torrent:String;
+		private var _torrent:String = null;
 		
-		private var _actress:String;
+		private var _actress:String = null;
+		
+		private var _initActress:Boolean = false;
 		
 		[Bindable]
 		private var _actressDataList:ArrayCollection = new ArrayCollection;
@@ -63,6 +66,7 @@ package org.avManager.model.data
 			loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onLoadIOError);
 			loaderInfo.removeEventListener(Event.COMPLETE, onLoadCoverCompleted);
 			Logger.error(event.text);
+			Alert.show(event.text);
 		}
 		
 		private function onLoadCoverCompleted(event:Event):void
@@ -106,6 +110,22 @@ package org.avManager.model.data
 				if(_classificationList[i].name == classificationName) return true; 
 			}
 			return false;
+		}
+		
+		public function initActress():void{
+			if(!this._initActress){
+				if(_actress){
+					_initActress = true;
+					var a:Array = _actress.split(" ");
+					var actressData:ActressData = null;
+					for(var i:int = 0; i < a.length; i++){
+						actressData = ActressManager.instance.getActressByName(a[i]);
+						if(actressData){
+							_actressDataList.addItem(actressData);					
+						}
+					}
+				}
+			}
 		}
 		
 		[SQLData(cloName="VIDEO_ID")]
@@ -220,14 +240,6 @@ package org.avManager.model.data
 			_actress = a.join(" ");
 			this.needUpdate = true;
 			_actressDataList.removeAll();
-			
-			var actressData:ActressData = null;
-			for(var i:int = 0; i < a.length; i++){
-				actressData = ActressManager.instance.getActressByName(a[i]);
-				if(actressData){
-					_actressDataList.addItem(actressData);					
-				}
-			}
 		}
 
 		public function get actressDataList():ArrayCollection
