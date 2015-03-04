@@ -149,6 +149,19 @@ package org.avManager.model
 			return actress;
 		}
 		
+		public function deleteActress(id:int, callback:Function):void{
+			SQLiteManager.instance.actressTable.del(id, function():void{
+				var i:int = _actressList.length;
+				while(--i > -1){
+					if((_actressList.getItemAt(i) as ActressData).id == id){
+						_actressList.removeItemAt(i);
+						break;
+					}
+				}
+				if(callback != null) callback();
+			});
+		}
+		
 		public static function get instance():ActressManager{
 			if(!_instance) _instance = new ActressManager(new T());
 			return _instance;

@@ -11,6 +11,7 @@
 			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
 			
+			import org.avManager.events.ActressEvent;
 			import org.avManager.model.ActressManager;
 			import org.avManager.model.data.ActressData;
 			import org.avManager.view.UIManager;
@@ -20,7 +21,7 @@
 			
 			private static const GAP_X:int = 102;
 			
-			private static const GAP_Y:int = 126;
+			private static const GAP_Y:int = 152;
 			
 			[Bindable]
 			private var _curPage:int = 0;
@@ -53,7 +54,8 @@
 			
 			public function updateActressList(list:Vector.<ActressData>):void{
 				this._actressDataList = list;
-				_curPage = 1;
+				if(_curPage < 0)
+					_curPage = 1;
 				_totalPage = Math.ceil(this._actressDataList.length / TOTAL_NUM);
 				this.updatePage();
 			}
@@ -205,6 +207,7 @@
 					_actressCellList[i] = cell;
 					this._container.addElement(cell);
 					cell.addEventListener(MouseEvent.CLICK, onCellClicked);
+					cell.addEventListener(ActressEvent.DELETED, onDeletedActressEvent);
 				}
 				onResize(null);
 			}
@@ -224,6 +227,8 @@
 			}
 			
 			private function updatePage():void{
+				if(this._curPage > this._totalPage) this._curPage = this._totalPage;
+				if(this._curPage < 1) this._curPage = 1;
 				var startIndex:int = (this._curPage - 1) * TOTAL_NUM;
 				var endIndex:int = startIndex + TOTAL_NUM - 1;
 				if(endIndex >= this._actressDataList.length){
@@ -270,6 +275,11 @@
 			protected function onUpdateActressScoreHandler(event:MouseEvent):void
 			{
 				UIManager.instance.showDmmRankParser();
+			}
+			
+			protected function onDeletedActressEvent(event:Event):void
+			{
+				filter();
 			}
 			
 		]]>

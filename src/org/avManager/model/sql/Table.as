@@ -168,7 +168,7 @@ package org.avManager.model.sql
 //			_deleteStatement.execute(); 
 //		}
 		
-		public function del(id:int, callback:Function):void{
+		public function del(id:int, callback:Function = null):void{
 			_deleteCallback = callback;
 			_deleteStatement.text = "delete from " + _tableName + " where ID = " + id;
 			Logger.info("执行删除语句:" + _deleteStatement.text);
